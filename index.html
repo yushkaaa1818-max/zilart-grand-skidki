@@ -142,6 +142,34 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.4vw,34px);m
 .btn-soft{background:var(--blue-soft);color:var(--ink);text-decoration:none}
 .copied{font-size:14px;color:var(--green);font-weight:700}
 .copytext{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px;resize:vertical}
+.btn:disabled{opacity:.6}
+.pdf{width:794px;min-height:1123px;padding:48px 56px;background:#fff;color:#012e45;font-family:var(--text);display:flex;flex-direction:column;gap:14px}
+.pdf .ph{display:flex;align-items:center;gap:10px;border-bottom:1px solid #dce5ec;padding-bottom:14px}
+.pdf .ph img{width:40px;height:40px}
+.pdf .ph b{display:block;font-family:var(--display);color:#1879d4;font-size:19px;letter-spacing:.04em;line-height:1}
+.pdf .ph small{color:#1879d4;font-size:12px}
+.pdf .ph span{margin-left:auto;color:#536774;font-size:13px}
+.pdf .pt{color:#1879d4;font-weight:700;font-size:15px}
+.pdf h1{margin:0;font-family:var(--display);font-weight:400;font-size:30px}
+.pdf .pa{margin:0;color:#536774;font-size:14px}
+.pdf .pg{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center}
+.pdf .pp{border:1px solid #dce5ec;border-radius:16px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:10px}
+.pdf .pp img{width:100%;height:100%;object-fit:contain}
+.pdf table{border-collapse:collapse;font-size:15px;width:100%}
+.pdf td{padding:7px 0;border-bottom:1px solid #dce5ec}
+.pdf td:last-child{text-align:right;font-weight:700}
+.pdf .pf{background:#f5f7fb;border-radius:16px;padding:16px 20px;display:flex;flex-direction:column;gap:2px}
+.pdf .pf small{color:#536774;font-size:14px}
+.pdf .pf b{font-family:var(--display);font-size:38px}
+.pdf .pf span{color:#14804a;font-weight:700;font-size:14px}
+.pdf h2{margin:8px 0 0;font-family:var(--display);font-weight:400;font-size:22px}
+.pdf .ps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pdf .s{border-radius:16px;padding:16px 18px}
+.pdf .s small{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.pdf .s b{font-family:var(--display);font-size:26px}
+.pdf .s.a{background:#1879d4;color:#fff}
+.pdf .s.b{background:#ddebf8}
+.pdf .pn{margin:auto 0 0;color:#536774;font-size:12px}
 .foot{font-size:13px;color:var(--muted);text-align:center;line-height:1.6}
 
 @media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
@@ -167,6 +195,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.4vw,34px);m
   <p class="foot">Наличие и цены сайта ЛСР проверены 25.11.2026. Дополнительная скидка — из списка застройщика, на сайте ЛСР её нет.<br>Итоговая цена = красная цена сайта − доп. скидка из списка, затем ещё −5% от полученной суммы. Перед бронью сверяйте наличие и цену у застройщика.</p>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 // номер|комнат(S/1/2)|отделка(N/F)|площадь|этаж|красная цена (спецпредложение)|чёрная цена (базовая)|id на lsr.ru|планировка есть
 const RAW = `307|1|N|41.5|26|27093731|34244098|200515|1
@@ -403,17 +432,49 @@ function detailView(f){
       <div class="track-l"><span>70% сейчас</span><span>30% через 6 мес.</span></div>
       <div class="copy-row">
         <button class="btn btn-main" id="copy">Скопировать расчёт для клиента</button>
+        <button class="btn btn-soft" id="pdf">Скачать PDF для клиента</button>
         <span class="copied" id="copied" hidden>Расчёт скопирован</span>
       </div>
       <textarea class="copytext" id="ct" readonly aria-label="Текст расчёта">${esc(copyText(f))}</textarea>
     </div>
   </section>`;
+  app.querySelector('#pdf').onclick = (e) => makePdf(f, e.currentTarget);
   const ct = app.querySelector('#ct'), ok = app.querySelector('#copied');
   app.querySelector('#copy').onclick = () => {
     const done = () => { ok.hidden=false; setTimeout(()=>ok.hidden=true,2500); };
     const fallback = () => { ct.focus(); ct.select(); ok.textContent='Текст выделен — нажмите Cmd+C'; done(); };
     try{ navigator.clipboard.writeText(ct.value).then(()=>{ok.textContent='Расчёт скопирован'; done();}, fallback); }catch(e){ fallback(); }
   };
+}
+
+// PDF-лист для клиента (A4). Работает на GitHub Pages; внутри claude.ai скачивание файлов заблокировано.
+async function makePdf(f, btn){
+  const ok = app.querySelector('#copied');
+  if(!window.html2pdf){ ok.textContent='PDF не загрузился — обновите страницу'; ok.hidden=false; return; }
+  const old = btn.textContent; btn.textContent='Готовлю PDF…'; btn.disabled=true;
+  const row = (a,b,cls='') => `<tr><td>${a}</td><td class="${cls}">${b}</td></tr>`;
+  const el = document.createElement('div');
+  el.innerHTML = `<div class="pdf">
+    <div class="ph"><img src="prostor-mark.png" alt=""><div><b>ПРОСТОР</b><small>недвижимость</small></div><span>${new Date().toLocaleDateString('ru-RU')}</span></div>
+    <div class="pt">ЖК ЗИЛАРТ ГРАНД · Дом 18 «ГРАНД»</div>
+    <h1>Квартира № ${f.n} · ${TYPE[f.r].toLowerCase()}</h1>
+    <p class="pa">Москва, ул. Автозаводская, вл. 23 · дом сдан · бизнес-класс</p>
+    <div class="pg">
+      <div class="pp">${f.plan?`<img src="${f.plan}" alt="">`:''}</div>
+      <table>${row('Площадь',area(f.area))}${row('Этаж',f.floor)}${row('Отделка',f.finish)}${row('Цена на сайте',fmt(f.red))}${row(`Скидка ${f.d}%`,'−'+fmt(f.save1))}${row(`Ещё скидка ${EXTRA}%`,'−'+fmt(f.save2))}</table>
+    </div>
+    <div class="pf"><small>Итоговая цена</small><b>${fmt(f.final)}</b><span>выгода ${fmt(f.save)} к цене на сайте</span></div>
+    <h2>Рассрочка без удорожания на 6 месяцев</h2>
+    <div class="ps"><div class="s a"><small>Сейчас · 70%</small><b>${fmt(f.first)}</b></div><div class="s b"><small>Через 6 месяцев · 30%</small><b>${fmt(f.rest)}</b></div></div>
+    <p class="pn">Промежуточных платежей нет. Цены и наличие актуальны на дату документа, перед бронированием уточняются у застройщика.</p>
+  </div>`;
+  el.style.cssText='position:fixed;left:-10000px;top:0;width:794px;background:#fff';
+  document.body.appendChild(el);
+  try{
+    await html2pdf().set({margin:0, filename:`ЗИЛАРТ-ГРАНД-кв-${f.n}.pdf`, image:{type:'jpeg',quality:0.95},
+      html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff'}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el.firstElementChild).save();
+  }catch(err){ ok.textContent='Не удалось сохранить PDF'; ok.hidden=false; }
+  el.remove(); btn.textContent=old; btn.disabled=false;
 }
 
 let lastScroll = 0;
