@@ -438,7 +438,10 @@ function detailView(f){
       <textarea class="copytext" id="ct" readonly aria-label="Текст расчёта">${esc(copyText(f))}</textarea>
     </div>
   </section>`;
-  app.querySelector('#pdf').onclick = (e) => makePdf(f, e.currentTarget);
+  const pdfBtn = app.querySelector('#pdf');
+  pdfBtn.onclick = (e) => makePdf(f, e.currentTarget);
+  let framed = true; try{ framed = window.self !== window.top; }catch(_){}
+  if(framed) pdfBtn.hidden = true; // в claude.ai скачивание заблокировано; PDF есть на GitHub-версии
   const ct = app.querySelector('#ct'), ok = app.querySelector('#copied');
   app.querySelector('#copy').onclick = () => {
     const done = () => { ok.hidden=false; setTimeout(()=>ok.hidden=true,2500); };
