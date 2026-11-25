@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="prostor-mark.png">
+<title>ЗИЛАРТ ГРАНД со скидкой</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap">
+<style>
+/* Layout: стиль сайта «Простор» (как Пушкино Град) — светлый фон, белые скруглённые карточки, синий бренд, оранжевый акцент для скидок */
+:root{
+  --bg:#eef2f7; --surface:#f5f7fb; --card:#fff; --ink:#012e45; --muted:#536774; --line:#dce5ec;
+  --blue:#1879d4; --blue-soft:#ddebf8; --accent:#f89332; --accent-soft:#fee9d6; --lav:#dddef8; --mint:#dcf5e8;
+  --red:#d6153c; --green:#14804a;
+  --display:"Trebuchet MS","Lato",Arial,sans-serif; --text:"Lato","Trebuchet MS",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:16px;line-height:1.4;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-block:16px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+.top{background:var(--card);border-radius:26px;padding:14px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.brand img{width:40px;height:40px}
+.brand b{display:block;font-family:var(--display);font-size:19px;letter-spacing:.04em;color:var(--blue);line-height:1}
+.brand small{display:block;font-size:12px;color:var(--blue);margin-top:2px}
+.top .sep{width:1px;height:34px;background:var(--line)}
+.top .city{font-size:13px;line-height:1.35}
+.top .internal{margin-left:auto;background:var(--accent-soft);color:#8a4a0b;border-radius:20px;padding:8px 14px;font-size:13px;font-weight:700}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px}
+.hero-main{background:var(--card);border-radius:26px;padding:26px 28px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{color:var(--blue);font-weight:700;font-size:15px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.4vw,34px);margin:0;line-height:1.15;text-wrap:balance}
+.hero-main p{margin:0;color:var(--muted)}
+.hero-main .terms{color:var(--blue);font-weight:700}
+.hero-note{margin-top:auto;background:var(--surface);border-radius:18px;padding:12px 16px;font-size:14px;color:var(--muted)}
+.hero-note b{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.tile{border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;min-height:104px}
+.tile b{font-family:var(--display);font-weight:700;font-size:30px;line-height:1}
+.tile span{font-size:14px}
+.t-blue{grid-column:span 3;background:var(--blue);color:#fff}
+.t-blue b{font-size:42px}
+.t-peach{grid-column:span 3;background:var(--accent-soft)}
+.t-peach b{font-size:24px}
+.t-sky{grid-column:span 2;background:var(--blue-soft)}
+.t-lav{grid-column:span 2;background:var(--lav)}
+.t-mint{grid-column:span 2;background:var(--mint)}
+
+/* filters */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.chip{border:0;background:var(--card);border-radius:22px;padding:9px 14px;display:inline-flex;gap:8px;align-items:center;font-size:15px}
+.chip i{font-style:normal;background:var(--accent-soft);border-radius:12px;padding:1px 8px;font-size:13px}
+.chip[aria-pressed="true"]{background:var(--accent);color:#fff}
+.chip[aria-pressed="true"] i{background:#fff;color:var(--ink)}
+.disc-row .chip[aria-pressed="true"]{background:var(--ink)}
+.disc-row .lbl{font-size:14px;color:var(--muted);margin-right:2px}
+.sel{border:0;background:var(--card);border-radius:22px;padding:9px 14px;font-size:15px}
+.sel.blue{background:var(--blue-soft);margin-left:auto}
+.search{border:0;background:var(--card);border-radius:22px;padding:9px 16px;font-size:15px;width:170px}
+.found{font-size:15px;color:var(--muted)}
+.found b{color:var(--ink)}
+
+/* cards */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{background:var(--card);border-radius:26px;padding:12px;display:flex;flex-direction:column;gap:12px;text-decoration:none;color:inherit;border:1px solid transparent;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--blue-soft);transform:translateY(-2px)}
+.plan{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;aspect-ratio:4/3;max-width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.plan img{width:100%;height:100%;object-fit:contain;padding:10px}
+.plan .noplan{font-size:13px;color:var(--muted);text-align:center;padding:16px}
+.badges{position:absolute;left:10px;top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.b{border-radius:10px;padding:3px 9px;font-size:13px;font-weight:700}
+.b-dark{background:var(--ink);color:#fff}
+.b-soft{background:var(--blue-soft);color:var(--ink);font-weight:400}
+.disc{position:absolute;right:10px;top:10px;background:var(--accent);color:#fff;border-radius:12px;padding:6px 10px;font-weight:900;font-size:17px;line-height:1}
+.disc small{display:block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.9;margin-bottom:2px}
+.body{padding:2px 8px 8px;display:flex;flex-direction:column;gap:12px}
+.ttl{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ttl h3{margin:0;font-family:var(--display);font-weight:400;font-size:21px}
+.ttl span{color:var(--blue);font-size:14px;white-space:nowrap}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.facts small{display:block;color:var(--muted);font-size:13px}
+.facts b{font-size:16px}
+.prices{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.pline{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted)}
+.pline b{font-weight:700}
+.pline .black{color:var(--ink)}
+.pline .red{color:var(--red)}
+.final{display:flex;flex-direction:column;gap:2px;margin-top:6px;background:var(--surface);border-radius:16px;padding:10px 12px}
+.final small{font-size:13px;color:var(--muted)}
+.final b{font-family:var(--display);font-size:28px;font-weight:700;line-height:1.1}
+.final .save{font-size:13px;color:var(--green);font-weight:700}
+.mini{font-size:13px;color:var(--muted)}
+.mini b{color:var(--ink)}
+.empty{background:var(--card);border-radius:26px;padding:40px;text-align:center;color:var(--muted)}
+
+/* detail */
+.back-row{display:flex;gap:10px;flex-wrap:wrap}
+.pill{border:0;background:var(--card);border-radius:22px;padding:10px 16px;color:var(--blue);font-weight:700;text-decoration:none;font-size:15px}
+.detail{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.panel{background:var(--card);border-radius:26px;padding:22px 24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.dplan{position:relative;aspect-ratio:4/3;max-width:100%;display:flex;align-items:center;justify-content:center}
+.dplan img{width:100%;height:100%;object-fit:contain}
+.dplan .disc{font-size:22px;padding:8px 12px}
+.panel h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(24px,3vw,32px);line-height:1.15}
+.kv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.kv small{display:block;color:var(--muted);font-size:13px}
+.kv b{font-size:16px}
+.pbox{border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:6px}
+.pbox .pline{font-size:15px}
+.bigfinal small{color:var(--muted);font-size:14px}
+.bigfinal b{display:block;font-family:var(--display);font-size:clamp(32px,4.6vw,44px);font-weight:700;line-height:1.05}
+.bigfinal .save{color:var(--green);font-weight:700;font-size:14px}
+.inst{grid-column:1/-1}
+.inst h3{margin:0;font-family:var(--display);font-weight:400;font-size:24px}
+.inst .sub{margin:0;color:var(--muted)}
+.steps{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:14px}
+.step{border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:6px}
+.step small{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.step b{font-family:var(--display);font-size:28px;line-height:1.1}
+.step span{font-size:14px;color:var(--muted)}
+.s1{background:var(--blue);color:#fff}.s1 span{color:#dbe9f8}
+.s2{background:var(--blue-soft)}
+.s3{background:var(--accent-soft)}
+.track{display:flex;height:14px;border-radius:8px;overflow:hidden}
+.track div:first-child{background:var(--blue);flex:70}
+.track div:last-child{background:var(--accent);flex:30}
+.track-l{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.copy-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:0;border-radius:22px;padding:12px 20px;font-weight:700;font-size:15px}
+.btn-main{background:var(--accent);color:#fff}
+.btn-soft{background:var(--blue-soft);color:var(--ink);text-decoration:none}
+.copied{font-size:14px;color:var(--green);font-weight:700}
+.copytext{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px;resize:vertical}
+.foot{font-size:13px;color:var(--muted);text-align:center;line-height:1.6}
+
+@media (max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{grid-template-columns:1fr}}
+@media (max-width:760px){.detail{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.sel.blue{margin-left:0}}
+@media (max-width:620px){.grid{grid-template-columns:1fr}.top .internal{margin-left:0}.top .sep{display:none}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.t-blue,.t-peach,.t-sky,.t-lav,.t-mint{grid-column:span 1}.t-mint{grid-column:span 2}.kv{grid-template-columns:repeat(2,minmax(0,1fr))}.search{width:100%}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#">
+      <img src="prostor-mark.png" alt="">
+      <span><b>ПРОСТОР</b><small>недвижимость</small></span>
+    </a>
+    <span class="sep"></span>
+    <span class="city">Москва<br>Простор-недвижимость</span>
+    <span class="internal">Для агентов · доп. скидки застройщика</span>
+  </header>
+  <main id="app"></main>
+  <p class="foot">Наличие и цены сайта ЛСР проверены 25.11.2026. Дополнительная скидка — из списка застройщика, на сайте ЛСР её нет.<br>Итоговая цена = красная цена сайта − доп. скидка из списка, затем ещё −5% от полученной суммы. Перед бронью сверяйте наличие и цену у застройщика.</p>
+</div>
+
+<script>
+// номер|комнат(S/1/2)|отделка(N/F)|площадь|этаж|красная цена (спецпредложение)|чёрная цена (базовая)|id на lsr.ru|планировка есть
+const RAW = `307|1|N|41.5|26|27093731|34244098|200515|1
+310|1|N|41.4|26|27162788|34331529|200518|1
+313|1|N|41.3|26|26926278|34032232|200521|1
+316|S|N|22.8|26|19596280|24756832|200524|1
+491|1|N|41.4|23|28686349|36259444|200699|1
+495|1|N|40.8|23|28114790|35536188|200703|1
+498|2|N|63.3|23|40623977|51365291|200706|1
+731|1|N|45.8|28|31933271|40368120|200939|1
+733|1|N|39.8|28|27361783|34583334|200941|1
+734|1|N|40.5|28|28041066|35442886|200942|1
+737|2|N|57.8|28|37538325|47460736|200945|1
+738|S|N|24.3|28|21386818|27022596|200946|1
+739|1|N|40.5|28|27769311|35099041|200947|1
+740|1|N|39.7|28|27521429|34785338|200948|1
+916|1|N|41.6|23|29025360|36688412|201124|1
+919|1|N|40.8|23|27994430|35383881|201127|1
+920|1|N|40.8|23|28127479|35552263|201128|1
+922|1|N|39.4|23|27349352|34567590|201130|1
+924|1|N|42.3|23|30118192|38071269|201132|1
+1204|1|F|43.5|28|35049559|44311449|201412|1
+1206|S|F|23.3|28|23252118|29382931|201414|1
+1385|1|N|41.5|23|28996133|36651472|201593|1
+1388|1|N|40.8|23|27995491|35385228|201596|1
+1389|1|N|40.9|23|28216092|35664391|201597|1
+1391|1|N|39.4|23|27525312|34790239|201599|1
+1393|1|N|42.4|23|30147332|38108187|201601|1
+1667|S|N|22.0|28|20882158|26384006|201875|1
+1669|1|N|39.7|28|27283189|34483896|201877|1
+1670|1|N|40.6|28|27577671|34856521|201878|1
+1672|S|N|24.8|28|22027260|27833015|201880|1
+1675|S|N|24.3|28|21483144|27144485|201883|1
+1676|1|N|40.5|28|27746955|35070691|201884|1
+1677|1|N|39.7|28|27510472|34771522|201885|1
+1679|S|N|20.7|28|20177014|25491718|201887|1`;
+
+// Доп. скидки из таблиц застройщика (№ квартиры → %). обновлено 25.11.2026.
+const DISC = {
+  498:12,737:10,741:13,921:12,923:10,1108:13,1121:13,1147:13,1160:13,1179:15,1199:13,1202:13,1205:15,1387:13,1671:12,1674:10,1678:13,
+  176:15,306:12,307:12,308:12,309:12,310:12,313:12,491:10,495:12,497:10,731:16,733:10,734:10,739:10,740:10,916:11,919:10,920:10,922:11,924:12,1200:12,1204:12,1207:10,1385:11,1388:10,1389:10,1391:11,1393:12,1669:12,1670:10,1676:11,1677:12,
+  316:10,738:10,1206:5,1667:10,1672:10,1675:10,1679:10
+};
+
+// Ещё одна доп. скидка, считается от суммы после скидки из таблицы
+const EXTRA = 5;
+const TYPE = {S:'Студия','1':'1-комн. евро','2':'2-комн. евро'};
+const TYPE_SHORT = {S:'Студия','1':'1-евро','2':'2-евро'};
+const FLATS = RAW.trim().split('\n').map(l=>{
+  const [n,r,f,a,fl,red,base,id,pl] = l.split('|');
+  const d = DISC[n] || 0;
+  const redN = +red, mid = Math.round(redN*(1-d/100)), final = Math.round(mid*(1-EXTRA/100));
+  const first = Math.round(final*0.7);
+  return {n:+n, r, finish:f==='F'?'С отделкой':'Без отделки', area:+a, floor:+fl, red:redN, base:base?+base:null,
+    id, plan:pl==='1'?`plans/${n}.png`:null, d, mid, final, save1:redN-mid, save2:mid-final, save:redN-final, first, rest:final-first, ppm:Math.round(final/+a)};
+});
+
+const fmt = v => v==null ? '—' : Math.round(v).toLocaleString('ru-RU').replace(/,/g,' ')+' ₽';
+const mln = v => (v/1e6).toFixed(1).replace('.',',');
+const area = v => v.toFixed(1).replace('.',',')+' м²';
+const lsr = f => `https://www.lsr.ru/msk/kvartiry-v-novostroikah/zilart-grand/flat/${f.id}/`;
+const plusMonths = (m) => {const d=new Date(); d.setMonth(d.getMonth()+m); return d.toLocaleDateString('ru-RU');};
+
+const state = {room:'all', disc:'all', finish:'all', sort:'final-asc', q:''};
+try{ const s=JSON.parse(localStorage.getItem('zg-filters')||'null'); if(s) Object.assign(state,s,{q:''}); }catch(e){}
+const save = () => { try{ localStorage.setItem('zg-filters', JSON.stringify(state)); }catch(e){} };
+
+const app = document.getElementById('app');
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function listView(){
+  const cnt = k => FLATS.filter(f=>f.r===k).length;
+  const finals = FLATS.map(f=>f.final);
+  const discs = [...new Set(FLATS.map(f=>f.d))].sort((a,b)=>a-b);
+  const chip = (key,val,label,count,grp) => `<button class="chip" data-k="${key}" data-v="${val}" aria-pressed="${state[key]===val}">${label}${count!=null?` <i>${count}</i>`:''}</button>`;
+
+  let list = FLATS.filter(f =>
+    (state.room==='all'||f.r===state.room) &&
+    (state.disc==='all'||f.d===+state.disc) &&
+    (state.finish==='all'||f.finish===state.finish) &&
+    (!state.q || String(f.n).includes(state.q.trim()))
+  );
+  const [k,dir] = state.sort.split('-');
+  list.sort((a,b)=> (dir==='asc'?1:-1)*(a[k]-b[k]) || a.final-b.final);
+
+  app.innerHTML = `
+  <section class="hero">
+    <div class="hero-main">
+      <span class="eyebrow">ЖК ЗИЛАРТ ГРАНД · Дом 18 «ГРАНД»</span>
+      <h1>Квартиры с дополнительной скидкой</h1>
+      <p>Москва, Даниловский район, ул. Автозаводская, вл. 23 · бизнес-класс</p>
+      <p class="terms">Дом сдан · рассрочка 70% / 30% на 6 месяцев без удорожания</p>
+      <div class="hero-note"><b>Как читать цены:</b> чёрная — базовая цена сайта ЛСР, красная — спецпредложение на сайте, крупная — итог после доп. скидки из списка застройщика и ещё −5% от полученной суммы.</div>
+    </div>
+    <div class="tiles">
+      <div class="tile t-blue"><b>${FLATS.length}</b><span>квартир в продаже</span></div>
+      <div class="tile t-peach"><b class="num">${mln(Math.min(...finals))}–${mln(Math.max(...finals))} млн ₽</b><span>итоговые цены на 25.11.2026</span></div>
+      <div class="tile t-sky"><b>${cnt('S')}</b><span>Студии</span></div>
+      <div class="tile t-lav"><b>${cnt('1')}</b><span>1-комн. евро</span></div>
+      <div class="tile t-mint"><b>${cnt('2')}</b><span>2-комн. евро</span></div>
+    </div>
+  </section>
+
+  <section class="filters" aria-label="Тип квартиры">
+    ${chip('room','all','Все',FLATS.length)}
+    ${chip('room','S','Студии',cnt('S'))}
+    ${chip('room','1','1-комн.',cnt('1'))}
+    ${chip('room','2','2-комн.',cnt('2'))}
+    <select class="sel" id="finish" aria-label="Отделка">
+      <option value="all">Любая отделка</option>
+      <option value="Без отделки">Без отделки</option>
+      <option value="С отделкой">С отделкой</option>
+    </select>
+    <input class="search" id="q" type="search" inputmode="numeric" placeholder="№ квартиры" value="${esc(state.q)}" aria-label="Поиск по номеру квартиры">
+    <select class="sel blue" id="sort" aria-label="Сортировка">
+      <option value="final-asc">Сначала дешевле</option>
+      <option value="final-desc">Сначала дороже</option>
+      <option value="d-desc">Скидка больше</option>
+      <option value="save-desc">Выгода в рублях больше</option>
+      <option value="area-asc">Площадь меньше</option>
+      <option value="area-desc">Площадь больше</option>
+    </select>
+  </section>
+  <section class="filters disc-row" aria-label="Размер скидки">
+    <span class="lbl">Доп. скидка:</span>
+    ${chip('disc','all','Любая',null)}
+    ${discs.map(d=>chip('disc',String(d),d+'%',FLATS.filter(f=>f.d===d).length)).join('')}
+  </section>
+
+  <div class="found">Найдено <b>${list.length}</b> из ${FLATS.length}${list.length?` · итог от <b class="num">${mln(Math.min(...list.map(f=>f.final)))}</b> до <b class="num">${mln(Math.max(...list.map(f=>f.final)))} млн ₽</b>`:''}</div>
+
+  ${list.length ? `<section class="grid">${list.map(card).join('')}</section>` : `<div class="empty">Нет квартир под эти фильтры. Сбросьте скидку или тип квартиры.</div>`}
+  `;
+
+  app.querySelector('#finish').value = state.finish;
+  app.querySelector('#sort').value = state.sort;
+  app.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{state[b.dataset.k]=b.dataset.v; save(); render();});
+  app.querySelector('#finish').onchange=e=>{state.finish=e.target.value; save(); render();};
+  app.querySelector('#sort').onchange=e=>{state.sort=e.target.value; save(); render();};
+  const q = app.querySelector('#q');
+  q.oninput=e=>{state.q=e.target.value.replace(/\D/g,''); const pos=q.selectionStart; render(); const nq=app.querySelector('#q'); nq.focus(); try{nq.setSelectionRange(pos,pos);}catch(_){} };
+}
+
+function planBox(f, cls){
+  return `<div class="${cls}">
+    ${f.plan?`<img src="${f.plan}" alt="Планировка кв. ${f.n}" loading="lazy">`:`<div class="noplan">Планировка — на сайте ЛСР</div>`}
+    <div class="badges"><span class="b b-dark">${TYPE_SHORT[f.r]}</span><span class="b b-soft">${f.finish}</span></div>
+    <div class="disc"><small>доп. скидки</small>−${f.d}% и −${EXTRA}%</div>
+  </div>`;
+}
+
+function card(f){
+  return `<a class="card" href="#kv-${f.n}">
+    ${planBox(f,'plan')}
+    <div class="body">
+      <div class="ttl"><h3>Квартира № ${f.n}</h3><span>Подробнее</span></div>
+      <div class="facts num">
+        <div><small>Этаж</small><b>${f.floor}</b></div>
+        <div><small>Площадь</small><b>${area(f.area)}</b></div>
+        <div><small>За м² итог</small><b>${fmt(f.ppm)}</b></div>
+      </div>
+      <div class="prices num">
+        <div class="pline"><span>Базовая цена сайта</span><b class="black">${fmt(f.base)}</b></div>
+        <div class="pline"><span>Цена на сайте</span><b class="red">${fmt(f.red)}</b></div>
+        <div class="final">
+          <small>Цена со скидками ${f.d}% и ${EXTRA}%</small>
+          <b>${fmt(f.final)}</b>
+          <span class="save">выгода ${fmt(f.save)} к цене сайта</span>
+        </div>
+        <div class="mini">Рассрочка: <b>${fmt(f.first)}</b> сейчас + <b>${fmt(f.rest)}</b> через 6 мес.</div>
+      </div>
+    </div>
+  </a>`;
+}
+
+function copyText(f){
+  return `ЖК ЗИЛАРТ ГРАНД, Дом 18 «ГРАНД» (дом сдан)
+Квартира № ${f.n}: ${TYPE[f.r].toLowerCase()}, ${area(f.area)}, ${f.floor} этаж, ${f.finish.toLowerCase()}
+
+Цена на сайте: ${fmt(f.red)}
+Дополнительная скидка ${f.d}%: −${fmt(f.save1)} → ${fmt(f.mid)}
+Ещё скидка ${EXTRA}%: −${fmt(f.save2)}
+Итоговая цена: ${fmt(f.final)}
+
+Рассрочка без удорожания на 6 месяцев:
+• первоначальный взнос 70% — ${fmt(f.first)}
+• остаток 30% через 6 месяцев — ${fmt(f.rest)}
+Промежуточных платежей нет.`;
+}
+
+function detailView(f){
+  document.title = `Кв. ${f.n} · ЗИЛАРТ ГРАНД со скидкой`;
+  app.innerHTML = `
+  <div class="back-row">
+    <a class="pill" href="#">‹ Все квартиры</a>
+    <a class="pill" href="${lsr(f)}" target="_blank" rel="noopener">Квартира на сайте ЛСР ↗</a>
+  </div>
+  <section class="detail">
+    <div class="panel">${planBox(f,'dplan')}</div>
+    <div class="panel">
+      <span class="eyebrow">ЖК ЗИЛАРТ ГРАНД · ${TYPE[f.r]}</span>
+      <h2>Дом 18 «ГРАНД» · Квартира № ${f.n}</h2>
+      <div class="kv num">
+        <div><small>Площадь</small><b>${area(f.area)}</b></div>
+        <div><small>Этаж</small><b>${f.floor}</b></div>
+        <div><small>Отделка</small><b>${f.finish}</b></div>
+        <div><small>Срок сдачи</small><b>Дом сдан</b></div>
+        <div><small>Класс</small><b>Бизнес</b></div>
+        <div><small>Итог за м²</small><b>${fmt(f.ppm)}</b></div>
+      </div>
+      <div class="pbox num">
+        <div class="pline"><span>Базовая цена сайта</span><b class="black">${fmt(f.base)}</b></div>
+        <div class="pline"><span>Цена на сайте (спецпредложение)</span><b class="red">${fmt(f.red)}</b></div>
+        <div class="pline"><span>Доп. скидка застройщика ${f.d}%</span><b class="black">−${fmt(f.save1)}</b></div>
+        <div class="pline"><span>Цена после скидки ${f.d}%</span><b class="black">${fmt(f.mid)}</b></div>
+        <div class="pline"><span>Ещё скидка ${EXTRA}% от этой суммы</span><b class="black">−${fmt(f.save2)}</b></div>
+        <div class="bigfinal">
+          <small>Итоговая цена со скидкой</small>
+          <b>${fmt(f.final)}</b>
+          ${f.base?`<span class="save">ниже базовой цены сайта на ${fmt(f.base-f.final)}</span>`:''}
+        </div>
+      </div>
+    </div>
+
+    <div class="panel inst">
+      <h3>Рассрочка 70% / 30% на 6 месяцев</h3>
+      <p class="sub">Без удорожания: считается от итоговой цены со скидкой. 70% вносится сейчас, остаток — одним платежом через 6 месяцев, промежуточных платежей нет.</p>
+      <div class="steps num">
+        <div class="step s1"><small>Сейчас · 70%</small><b>${fmt(f.first)}</b><span>первоначальный взнос</span></div>
+        <div class="step s2"><small>Через 6 месяцев · 30%</small><b>${fmt(f.rest)}</b><span>остаток одним платежом, ориентир ${plusMonths(6)} при брони сегодня</span></div>
+        <div class="step s3"><small>Итого</small><b>${fmt(f.final)}</b><span>без удорожания, как при 100% оплате</span></div>
+      </div>
+      <div class="track" aria-hidden="true"><div></div><div></div></div>
+      <div class="track-l"><span>70% сейчас</span><span>30% через 6 мес.</span></div>
+      <div class="copy-row">
+        <button class="btn btn-main" id="copy">Скопировать расчёт для клиента</button>
+        <span class="copied" id="copied" hidden>Расчёт скопирован</span>
+      </div>
+      <textarea class="copytext" id="ct" readonly aria-label="Текст расчёта">${esc(copyText(f))}</textarea>
+    </div>
+  </section>`;
+  const ct = app.querySelector('#ct'), ok = app.querySelector('#copied');
+  app.querySelector('#copy').onclick = () => {
+    const done = () => { ok.hidden=false; setTimeout(()=>ok.hidden=true,2500); };
+    const fallback = () => { ct.focus(); ct.select(); ok.textContent='Текст выделен — нажмите Cmd+C'; done(); };
+    try{ navigator.clipboard.writeText(ct.value).then(()=>{ok.textContent='Расчёт скопирован'; done();}, fallback); }catch(e){ fallback(); }
+  };
+}
+
+let lastScroll = 0;
+function render(){
+  const m = location.hash.match(/^#kv-(\d+)$/);
+  const f = m && FLATS.find(x=>x.n===+m[1]);
+  if(f){ detailView(f); window.scrollTo(0,0); }
+  else { document.title='ЗИЛАРТ ГРАНД со скидкой'; listView(); }
+}
+window.addEventListener('hashchange', ()=>{
+  const goingDetail = /^#kv-/.test(location.hash);
+  if(goingDetail) lastScroll = window.scrollY;
+  render();
+  if(!goingDetail) window.scrollTo(0,lastScroll);
+});
+render();
+</script>
+
+</body>
+</html>
