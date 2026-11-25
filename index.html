@@ -146,7 +146,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(26px,3.4vw,34px);m
 .copied{font-size:14px;color:var(--green);font-weight:700}
 .copytext{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px;resize:vertical}
 .btn:disabled{opacity:.6}
-.pdf{width:794px;min-height:1123px;padding:48px 56px;background:#fff;color:#012e45;font-family:var(--text);display:flex;flex-direction:column;gap:14px}
+.pdf{width:794px;height:1120px;overflow:hidden;padding:48px 56px;background:#fff;color:#012e45;font-family:var(--text);display:flex;flex-direction:column;gap:14px}
 .pdf .ph{display:flex;align-items:center;gap:10px;border-bottom:1px solid #dce5ec;padding-bottom:14px}
 .pdf .ph img{width:40px;height:40px}
 .pdf .ph b{display:block;font-family:var(--display);color:#1879d4;font-size:19px;letter-spacing:.04em;line-height:1}
@@ -477,11 +477,14 @@ async function makePdf(f, btn){
     <div class="ps"><div class="s a"><small>Сейчас · 70%</small><b>${fmt(f.first)}</b></div><div class="s b"><small>Через 6 месяцев · 30%</small><b>${fmt(f.rest)}</b></div></div>
     <p class="pn">Промежуточных платежей нет. Цены и наличие актуальны на дату документа, перед бронированием уточняются у застройщика.</p>
   </div>`;
-  el.style.cssText='position:fixed;left:-10000px;top:0;width:794px;background:#fff';
+  el.style.cssText='position:absolute;left:0;top:0;width:794px;background:#fff;z-index:-1';
   document.body.appendChild(el);
+  const sy = window.scrollY; window.scrollTo(0,0);
   try{
     await html2pdf().set({margin:0, filename:`ЗИЛАРТ-ГРАНД-кв-${f.n}.pdf`, image:{type:'jpeg',quality:0.95},
-      html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff'}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el.firstElementChild).save();
+      html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff', scrollX:0, scrollY:0, windowWidth:794},
+      pagebreak:{mode:'avoid-all'}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(el.firstElementChild).save();
+    window.scrollTo(0,sy);
   }catch(err){ ok.textContent='Не удалось сохранить PDF'; ok.hidden=false; }
   el.remove(); btn.textContent=old; btn.disabled=false;
 }
