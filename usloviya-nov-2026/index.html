@@ -204,13 +204,9 @@ dialog.sdlg::backdrop { background: rgba(20, 21, 25, .62); }
   </div>
 </dialog>
 <dialog class="sdlg" id="stats-dlg" aria-labelledby="stats-title">
-  <div class="promo-head"><div><div class="eyebrow">Отчёт владельца</div><h2 id="stats-title">Статистика сайта</h2></div><button type="button" class="promo-x" id="stats-x" aria-label="Закрыть">×</button></div>
+  <div class="promo-head"><div><div class="eyebrow">Только для владельца</div><h2 id="stats-title">Статистика сайта</h2></div><button type="button" class="promo-x" id="stats-x" aria-label="Закрыть">×</button></div>
   <div class="sbody">
-    <p class="sub">Считаются открытия сайта, просмотры условий по ЖК и нажатия на супер предложения. IP-адреса и контакты посетителей не сохраняются.</p>
-    <form class="sform" id="stats-form">
-      <input id="stats-code" type="password" autocomplete="off" placeholder="Код владельца" aria-label="Код владельца">
-      <button class="promo-go" type="submit">Показать</button>
-    </form>
+    <p class="sub">Счёт идёт с 27 ноября 2026. Сервис считает только количество и не знает, кто именно заходил. Чтобы увидеть свежие цифры, обновите страницу.</p>
     <div id="stats-out" class="sout"></div>
   </div>
 </dialog>
@@ -500,15 +496,24 @@ dialog.sdlg::backdrop { background: rgba(20, 21, 25, .62); }
 
 </main>
 
-<footer><div class="wrap">Условия реализации на ноябрь 2026 года, собраны из внутреннего документа. Ставки банков могут меняться, перед сделкой уточняйте актуальные условия.<br><a href="#stats" class="foot-stats">Статистика сайта (для владельца)</a></div></footer>
+<footer><div class="wrap">Условия реализации на ноябрь 2026 года, собраны из внутреннего документа. Ставки банков могут меняться, перед сделкой уточняйте актуальные условия.</div></footer>
 
 <script>
-// Статистика: события уходят в Google-таблицу владельца (без IP и контактов). Пустой адрес — сбор выключен.
-const STATS_URL = "";
+// Статистика: бесплатный счётчик Abacus, без регистрации. Хранит только количества, без IP и контактов.
+const STATS_NS = "prostor-usloviya-7a9f92";
+const STATS_API = "https://abacus.jasoncameron.dev";
 let inFrame = true; try { inFrame = window.self !== window.top; } catch (e) {}
+function hit(key) {
+  if (inFrame) return;
+  try { fetch(`${STATS_API}/hit/${STATS_NS}/${key}`, { keepalive: true, mode: "cors" }).catch(() => {}); } catch (e) {}
+}
 function track(e, n) {
-  if (!STATS_URL || inFrame) return;
-  try { navigator.sendBeacon(STATS_URL, new Blob([JSON.stringify({ e, n: n || "" })], { type: "text/plain" })); } catch (err) {}
+  if (e === "visit") {
+    hit("visit");
+    let first = false;
+    try { if (!localStorage.getItem("usl-seen")) { localStorage.setItem("usl-seen", "1"); first = true; } } catch (err) {}
+    if (first) hit("uniq");
+  } else if (n) hit(`${e}-${n}`);
 }
 </script>
 <script>
@@ -689,44 +694,35 @@ document.getElementById("rates").innerHTML = rates.map(([bank, r, term, lim]) =>
 (() => {
   const PROJ = { "zilart-18": "Зиларт, лот 18", "zilart-21": "Зиларт, лот 21", "zilart-33": "Зиларт, лот 33", "obrucheva-30": "Обручева 30", "wave-1": "Вейв, очередь 1", "wave-2": "Вейв, очередь 2", "parkside-1": "Парксайд, очередь 1", "parkside-2": "Парксайд, очередь 2", "luchi-dkp": "Лучи, корпуса 1–4, 12", "luchi": "Лучи, корпуса 9, 15", "luchi2-1-4": "Лучи 2, корпуса 1–4", "luchi2-5-10": "Лучи 2, корпуса 5–10", "dn-1": "Дмитровское небо, очередь 1", "dn-2-5": "Дмитровское небо, корпус 2.5" };
   const OFF = { parkside: "Парксайд: транши от 1 700 ₽", zilart: "Зиларт: транши 1 700 ₽", ready: "Готовые дома: 4,4%" };
-  const KEY = "usl-owner-code";
-  const getCode = () => { try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v && v.exp > Date.now()) return v.code; } catch (e) {} return ""; };
-  const setCode = c => { try { c ? localStorage.setItem(KEY, JSON.stringify({ code: c, exp: Date.now() + 864e5 })) : localStorage.removeItem(KEY); } catch (e) {} };
   const esc = v => String(v).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
   const num = v => (v || 0).toLocaleString("ru-RU");
-  const dlg = document.getElementById("stats-dlg"), out = document.getElementById("stats-out"), form = document.getElementById("stats-form");
-  const table = (head, rows, empty) => `<div class="table-box"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.length ? rows.join("") : `<tr><td colspan="${head.length}">${empty}</td></tr>`}</tbody></table></div>`;
-  function html(r) {
-    const t = r.totals || {};
-    const pr = Object.entries(r.projects || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr><td class="proj">${esc(PROJ[k] || k)}</td><td>${num(v)}</td></tr>`);
-    const of = Object.entries(r.offers || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr><td class="proj">${esc(OFF[k] || k)}</td><td>${num(v)}</td></tr>`);
-    const dy = Object.entries(r.days || {}).sort((a, b) => b[0].localeCompare(a[0])).map(([d, v]) => `<tr><td>${esc(d.split("-").reverse().join("."))}</td><td>${num(v.visit)}</td><td>${num(v.proj)}</td><td>${num(v.offer)}</td></tr>`);
-    return `<p class="sub">Последние 30 дней · обновлено ${esc(r.updated ? new Date(r.updated).toLocaleString("ru-RU") : "")}</p>
-      <div class="stiles"><div><b>${num(t.visit)}</b><span>Открытия сайта</span></div><div><b>${num(t.proj)}</b><span>Просмотры условий ЖК</span></div><div><b>${num(t.offer)}</b><span>Нажатия на супер предложения</span></div></div>
-      <h3>По ЖК</h3>${table(["ЖК", "Просмотры"], pr, "Пока нет просмотров")}
-      <h3>Супер предложения</h3>${table(["Предложение", "Нажатия"], of, "Пока нет нажатий")}
-      <h3>По дням</h3>${table(["Дата", "Открытия", "ЖК", "Предложения"], dy, "Пока нет данных")}
-      <div class="srow">${/^https:\/\//.test(r.sheetUrl || "") ? `<a class="sbtn" href="${esc(r.sheetUrl)}" target="_blank" rel="noopener">Открыть Google-таблицу ↗</a>` : ""}<button class="sbtn" id="stats-logout" type="button">Выйти</button></div>`;
-  }
-  async function load(code) {
+  const dlg = document.getElementById("stats-dlg"), out = document.getElementById("stats-out");
+  const get = async key => { try { const r = await fetch(`${STATS_API}/get/${STATS_NS}/${key}`); if (!r.ok) return 0; return (await r.json()).value || 0; } catch (e) { return null; } };
+  const table = (head, rows) => `<div class="table-box"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table></div>`;
+  async function load() {
     out.textContent = "Загружаю…";
-    try {
-      const r = await (await fetch(`${STATS_URL}?code=${encodeURIComponent(code)}`)).json();
-      if (!r.ok) { setCode(""); form.hidden = false; out.textContent = "Неверный код. Попробуйте ещё раз."; return; }
-      setCode(code); form.hidden = true; out.innerHTML = html(r);
-      document.getElementById("stats-logout").onclick = () => { setCode(""); form.hidden = false; out.textContent = ""; };
-    } catch (e) { out.textContent = "Не удалось загрузить статистику. Проверьте интернет и попробуйте ещё раз."; }
+    const pk = Object.keys(PROJ), ok = Object.keys(OFF);
+    const [visit, uniq, ...rest] = await Promise.all(["visit", "uniq", ...pk.map(k => "proj-" + k), ...ok.map(k => "offer-" + k)].map(get));
+    if (visit === null) { out.textContent = "Не удалось загрузить статистику. Проверьте интернет и попробуйте ещё раз."; return; }
+    const pv = pk.map((k, i) => [k, rest[i] || 0]).sort((a, b) => b[1] - a[1]);
+    const ov = ok.map((k, i) => [k, rest[pk.length + i] || 0]).sort((a, b) => b[1] - a[1]);
+    const sum = a => a.reduce((t, x) => t + x[1], 0);
+    out.innerHTML = `<p class="sub">Обновлено ${esc(new Date().toLocaleString("ru-RU"))}</p>
+      <div class="stiles"><div><b>${num(uniq)}</b><span>Уникальные посетители</span></div><div><b>${num(visit)}</b><span>Заходы на сайт</span></div><div><b>${num(sum(pv))}</b><span>Просмотры условий ЖК</span></div><div><b>${num(sum(ov))}</b><span>Нажатия на супер предложения</span></div></div>
+      <h3>По ЖК</h3>${table(["ЖК", "Просмотры"], pv.map(([k, v]) => `<tr><td class="proj">${esc(PROJ[k])}</td><td>${num(v)}</td></tr>`))}
+      <h3>Супер предложения</h3>${table(["Предложение", "Нажатия"], ov.map(([k, v]) => `<tr><td class="proj">${esc(OFF[k])}</td><td>${num(v)}</td></tr>`))}
+      <div class="srow"><button class="sbtn" id="stats-reload" type="button">Обновить цифры</button></div>`;
+    document.getElementById("stats-reload").onclick = load;
   }
   function open() {
-    if (!STATS_URL) { form.hidden = true; out.textContent = "Сбор статистики ещё не подключён."; }
-    else { const c = getCode(); form.hidden = !!c; out.textContent = ""; if (c) load(c); }
+    if (inFrame) out.textContent = "Статистика открывается по ссылке на GitHub, внутри claude.ai она недоступна.";
+    else load();
     if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute("open", ""); } }
   }
-  function close() { if (dlg.open) dlg.close(); }
+  const close = () => { if (dlg.open) dlg.close(); };
   dlg.addEventListener("close", () => { if (location.hash === "#stats") history.replaceState(null, "", location.pathname + location.search); });
   document.getElementById("stats-x").onclick = close;
   dlg.addEventListener("click", e => { if (e.target === dlg) close(); });
-  form.addEventListener("submit", e => { e.preventDefault(); const c = document.getElementById("stats-code").value.trim(); if (c && STATS_URL) load(c); });
   window.addEventListener("hashchange", () => { if (location.hash === "#stats") open(); });
   document.querySelectorAll("a.offer").forEach(a => a.addEventListener("click", () => track("offer", a.dataset.offer)));
   if (location.hash === "#stats") open(); else track("visit");
