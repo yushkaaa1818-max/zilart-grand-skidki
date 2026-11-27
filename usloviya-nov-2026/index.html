@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Условия реализации, ноябрь 2026</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap">
+<style>
+/* Layout: красная полоса-заголовок, липкая навигация, сводная матрица по ЖК, затем программы. Единая светлая тема в красно-графитовой гамме. */
+:root {
+  --bg: #f4f4f5;
+  --surface: #ffffff;
+  --fg: #1f2024;
+  --muted: #6b6d75;
+  --line: #e3e3e6;
+  --accent: #e01d42;
+  --accent-dark: #b8122f;
+  --accent-soft: #fde8ec;
+  --graphite: #2b2d33;
+  --warn: #b8122f;
+  --warn-soft: #f6f6f7;
+  --font-display: "Montserrat", "Manrope", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Montserrat", system-ui, sans-serif;
+  --cut: 14px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 64px); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.6 var(--font-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.brandbar { background: var(--surface); }
+.brandbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 18px; flex-wrap: wrap; }
+.brandbar img { height: 34px; width: auto; display: block; }
+.brandbar .period { font: 700 12px/1 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+
+header.top { background: var(--accent); color: #fff; }
+header.top .wrap { padding-block: 40px 36px; }
+.eyebrow { font: 700 12px/1 var(--font-display); letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+h1 { font: 800 clamp(28px, 5.4vw, 46px)/1.1 var(--font-display); margin: 12px 0 12px; text-wrap: balance; letter-spacing: -.01em; text-transform: uppercase; }
+.lead { color: rgba(255,255,255,.9); max-width: 62ch; margin: 0; font-size: 16px; }
+
+nav.sections { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--graphite); }
+nav.sections .wrap { display: flex; gap: 2px; overflow-x: auto; padding-block: 0; scrollbar-width: none; }
+nav.sections a { flex: none; padding: 14px 14px; color: #c9cad0; text-decoration: none; font: 700 13px/1 var(--font-display); white-space: nowrap; border-bottom: 3px solid transparent; }
+nav.sections a:hover, nav.sections a:focus-visible { color: #fff; border-bottom-color: var(--accent); outline: none; }
+
+main section { padding-block: 48px 8px; }
+h2 { font: 800 24px/1.2 var(--font-display); margin: 0 0 8px; text-wrap: balance; text-transform: uppercase; letter-spacing: .01em; display: flex; align-items: center; gap: 12px; }
+h2::before { content: ""; flex: none; width: 18px; height: 18px; background: var(--accent); clip-path: polygon(30% 0, 100% 0, 100% 70%, 70% 100%, 0 100%, 0 30%); }
+.sub { color: var(--muted); margin: 0 0 20px; max-width: 70ch; }
+h3 { font: 700 16px/1.35 var(--font-display); margin: 0 0 6px; }
+
+.table-box { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+thead th { font: 700 11px/1.3 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--graphite); white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:not(.group):hover td { background: #fafafa; }
+td.proj { font-weight: 700; white-space: nowrap; }
+td.proj span { display: block; font-weight: 500; color: var(--muted); font-size: 13px; }
+.group td { background: var(--accent-soft); font: 800 11px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-dark); padding-block: 9px; }
+.dash { color: var(--muted); }
+
+.chip { display: inline-block; padding: 3px 10px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: var(--accent-soft); color: var(--accent-dark); margin: 0 4px 4px 0; clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px); }
+.chip.warn { background: var(--accent); color: #fff; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 14px; }
+.card { background: var(--surface); padding: 20px; min-width: 0; display: flex; flex-direction: column; gap: 10px; clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut)); }
+.pv { display: flex; align-items: baseline; gap: 8px; }
+.pv b { font: 800 34px/1 var(--font-display); color: var(--accent); }
+.pv small { color: var(--muted); font-size: 13px; }
+.card p { margin: 0; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.steps li { display: grid; grid-template-columns: 84px 1fr; gap: 10px; font-size: 14px; }
+.steps li > span:first-child { font: 700 11px/1.9 var(--font-display); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.note { font-size: 13.5px; color: var(--muted); }
+.callout { background: var(--surface); border-left: 4px solid var(--accent); padding: 12px 16px; font-size: 14px; }
+.callout b { color: var(--accent); }
+
+.stack { display: grid; gap: 14px; }
+.rules { margin: 18px 0 0; display: grid; gap: 10px; }
+
+.tranche { display: flex; height: 32px; gap: 3px; font: 700 12px/32px var(--font-display); }
+.tranche div { padding: 0 10px; white-space: nowrap; }
+.t1 { background: var(--accent); color: #fff; }
+.t2 { background: var(--accent-soft); color: var(--accent-dark); }
+.t3 { background: var(--graphite); color: #fff; }
+
+.mech { counter-reset: m; list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.mech li { counter-increment: m; display: grid; grid-template-columns: 30px 1fr; gap: 10px; }
+.mech li::before { content: counter(m); font: 800 13px/26px var(--font-display); width: 26px; height: 26px; text-align: center; background: var(--accent); color: #fff; clip-path: polygon(25% 0, 100% 0, 100% 75%, 75% 100%, 0 100%, 0 25%); }
+
+.rate-bar { height: 6px; background: var(--line); width: 120px; position: relative; margin-top: 7px; }
+.rate-bar i { position: absolute; inset: 0 auto 0 0; background: var(--accent); }
+td.rate { font: 800 17px/1.3 var(--font-display); white-space: nowrap; }
+
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+
+footer { margin-top: 48px; background: var(--graphite); color: #b9bac1; font-size: 13px; }
+footer .wrap { padding-block: 28px 36px; }
+a { color: var(--accent); font-weight: 600; }
+.picker { display: grid; gap: 12px; }
+.pgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pgroup > span { font: 800 11px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); width: 150px; flex: none; }
+@media (max-width: 560px) { .pgroup > span { width: 100%; } }
+.pbtn { font: 700 13px/1 var(--font-display); padding: 10px 14px; border: 0; cursor: pointer; background: var(--surface); color: var(--fg); clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px); }
+.pbtn:hover { background: var(--accent-soft); color: var(--accent-dark); }
+.pbtn:focus-visible { outline: 3px solid var(--graphite); outline-offset: 2px; }
+.pbtn[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.panel { margin-top: 22px; display: grid; gap: 14px; }
+.phead { background: var(--graphite); color: #fff; padding: 22px 22px 18px; display: grid; gap: 12px; }
+.phead h3 { font: 800 clamp(20px, 3.6vw, 28px)/1.15 var(--font-display); text-transform: uppercase; margin: 0; }
+.phead h3 small { display: block; font: 700 13px/1.4 var(--font-display); color: #c9cad0; text-transform: none; margin-top: 4px; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.facts div { display: grid; gap: 3px; }
+.facts dt { font: 700 10.5px/1 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: #9fa1a9; }
+.facts dd { margin: 0; font: 800 16px/1.3 var(--font-display); }
+.facts dd.hot { color: #ff6b86; }
+.panel-h { font: 800 18px/1.2 var(--font-display); text-transform: uppercase; margin: 14px 0 0; }
+.tranche div { min-width: max-content; }
+.block h4 { font: 800 14px/1.2 var(--font-display); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 10px; color: var(--accent); }
+.empty { color: var(--muted); font-size: 14px; }
+td.proj a { color: inherit; text-decoration: none; border-bottom: 1px dashed var(--muted); }
+td.proj a:hover { color: var(--accent); border-color: var(--accent); }
+.more summary { cursor: pointer; color: var(--accent); font-weight: 700; font-size: 14px; list-style: none; display: inline-flex; align-items: center; gap: 6px; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary::after { content: "▾"; transition: transform .15s; }
+.more[open] summary::after { transform: rotate(180deg); }
+.more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.more .mech { margin-top: 12px; font-size: 14px; }
+</style>
+</head>
+<body>
+
+
+
+<header class="top"><div class="wrap">
+  <div class="eyebrow">Действует с 1 по 30 ноября 2026</div>
+  <h1>Условия реализации</h1>
+  <p class="lead">Рассрочки, траншевая и семейная ипотека, субсидированные ставки, трейд-ин и условия по коммерческим помещениям. Выберите жилой комплекс, чтобы увидеть его условия; ниже сводная таблица и детали всех программ.</p>
+</div></header>
+
+<nav class="sections" aria-label="Разделы">
+  <div class="wrap">
+    <a href="#by-project">Условия по ЖК</a>
+    <a href="#projects">Сводка по ЖК</a>
+    <a href="#installments">Рассрочки</a>
+    <a href="#tranches">Траншевая ипотека</a>
+    <a href="#family">Семейная ипотека</a>
+    <a href="#subsidy">Субсидированные ставки</a>
+    <a href="#tradein">Трейд-ин</a>
+    <a href="#commercial">Коммерция</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ ПО ЖК ============ -->
+<section id="by-project">
+  <h2>Условия по ЖК</h2>
+  <p class="sub">Выберите проект: ниже соберутся все условия, которые к нему относятся, с учётом сроков, удорожания и доступных программ.</p>
+  <div class="picker" id="picker"></div>
+  <div class="panel" id="panel" aria-live="polite"></div>
+</section>
+
+<!-- ============ СВОДКА ============ -->
+<section id="projects">
+  <h2>Сводка по жилым комплексам</h2>
+  <p class="sub">Что доступно по каждому проекту для жилых квартир. Нажмите на название, чтобы открыть все условия проекта. Семейная ипотека и субсидированные ставки действуют во всех ЖК.</p>
+  <div class="table-box">
+    <table>
+      <thead><tr><th>Проект</th><th>Остаток при ПВ 50%</th><th>Удорожание в рассрочке</th><th>Траншевая ипотека Сбер</th></tr></thead>
+      <tbody>
+        <tr class="group"><td colspan="4">Зиларт</td></tr>
+        <tr><td class="proj"><a href="#zilart-18">Зиларт</a><span>лот 18</span></td><td>до 12 месяцев</td><td class="dash">нет</td><td class="dash">—</td></tr>
+        <tr><td class="proj"><a href="#zilart-21">Зиларт</a><span>лот 21</span></td><td>до октября 2027</td><td class="dash">нет</td><td><span class="chip">20,1% · 6 мес</span><span class="chip">30% · 12 мес</span></td></tr>
+        <tr><td class="proj"><a href="#zilart-33">Зиларт</a><span>лот 33</span></td><td>до сентября 2027</td><td class="dash">нет</td><td><span class="chip">20,1% · 6 мес</span><span class="chip">30% · 12 мес</span></td></tr>
+        <tr class="group"><td colspan="4">Обручева 30</td></tr>
+        <tr><td class="proj"><a href="#obrucheva-30">Обручева 30</a></td><td>до сентября 2027</td><td class="dash">нет</td><td><span class="chip">20,1% · 6 мес</span><span class="chip">30% · 12 мес</span></td></tr>
+        <tr class="group"><td colspan="4">Вейв</td></tr>
+        <tr><td class="proj"><a href="#wave-1">Вейв</a><span>очередь 1</span></td><td>до 12 месяцев</td><td class="dash">нет</td><td class="dash">—</td></tr>
+        <tr><td class="proj"><a href="#wave-2">Вейв</a><span>очередь 2</span></td><td>до июня 2027</td><td class="dash">нет</td><td class="dash">—</td></tr>
+        <tr class="group"><td colspan="4">Парксайд</td></tr>
+        <tr><td class="proj"><a href="#parkside-1">Парксайд</a><span>очередь 1</span></td><td>до 12 месяцев</td><td><span class="chip warn">+5,5%</span></td><td class="dash">—</td></tr>
+        <tr><td class="proj"><a href="#parkside-2">Парксайд</a><span>очередь 2</span></td><td>до ноября 2027</td><td class="dash">нет</td><td><span class="chip">30% · 2 года</span></td></tr>
+        <tr class="group"><td colspan="4">Лучи</td></tr>
+        <tr><td class="proj"><a href="#luchi-dkp">Лучи</a><span>корпуса 1–4, 12 · ДКП</span></td><td>12 месяцев</td><td class="dash">нет</td><td class="dash">—</td></tr>
+        <tr class="group"><td colspan="4">Лучи 2</td></tr>
+        <tr><td class="proj"><a href="#luchi2-1-4">Лучи 2</a><span>корпуса 1–4</span></td><td class="dash">не указан</td><td><span class="chip warn">+5,5%</span></td><td class="dash">—</td></tr>
+        <tr><td class="proj"><a href="#luchi2-5-10">Лучи 2</a><span>корпуса 5–10</span></td><td>до марта 2027</td><td><span class="chip warn">+5,5%</span></td><td class="dash">—</td></tr>
+        <tr class="group"><td colspan="4">Дмитровское небо</td></tr>
+        <tr><td class="proj"><a href="#dn-1">Дмитровское небо</a><span>очередь 1</span></td><td>до 12 месяцев</td><td><span class="chip warn">+5,5%</span></td><td class="dash">—</td></tr>
+        <tr><td class="proj"><a href="#dn-2-5">Дмитровское небо</a><span>корпус 2.5</span></td><td>до мая 2027</td><td class="dash">нет</td><td class="dash">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note" style="margin-top:10px">Удорожание +5,5% применяется ко всем рассрочкам проекта, кроме рассрочки с ПВ 70%.</p>
+</section>
+
+<!-- ============ РАССРОЧКИ ============ -->
+<section id="installments">
+  <h2>Программы рассрочек</h2>
+  <p class="sub">Жилые помещения. Ежемесячный платёж во всех программах, кроме последней, 50 000 ₽.</p>
+  <div class="grid">
+    <article class="card">
+      <div class="pv"><b>20%</b><small>первоначальный взнос</small></div>
+      <ul class="steps">
+        <li><span>ежемесячно</span><span>50 000 ₽</span></li>
+        <li><span>остаток</span><span>через 3 месяца</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <div class="pv"><b>25%</b><small>первоначальный взнос</small></div>
+      <ul class="steps">
+        <li><span>ежемесячно</span><span>50 000 ₽</span></li>
+        <li><span>6-й месяц</span><span>платёж 25%</span></li>
+        <li><span>далее</span><span>50 000 ₽ в месяц</span></li>
+        <li><span>остаток</span><span>последним платежом, общий срок не более 9 месяцев</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <div class="pv"><b>30%</b><small>первоначальный взнос</small></div>
+      <ul class="steps">
+        <li><span>ежемесячно</span><span>50 000 ₽</span></li>
+        <li><span>остаток</span><span>через 6 месяцев</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <div class="pv"><b>50%</b><small>первоначальный взнос</small></div>
+      <ul class="steps">
+        <li><span>ежемесячно</span><span>50 000 ₽</span></li>
+        <li><span>остаток</span><span>срок зависит от проекта, см. <a href="#projects">сводку</a></span></li>
+      </ul>
+      <p><span class="chip">суммируется со скидкой до 2%</span></p>
+    </article>
+    <article class="card">
+      <div class="pv"><b>70%</b><small>первоначальный взнос</small></div>
+      <ul class="steps">
+        <li><span>ежемесячно</span><span>50 000 ₽</span></li>
+        <li><span>остаток</span><span>через 6 месяцев</span></li>
+      </ul>
+      <p><span class="chip">суммируется со скидкой до 5%</span><span class="chip">без удорожания +5,5%</span></p>
+    </article>
+    <article class="card">
+      <div class="pv"><b>20%</b><small>ПВ · платёж под 8% годовых</small></div>
+      <ul class="steps">
+        <li><span>ежемесячно</span><span>рассчитывается под 8% годовых сроком на 25% (формулировка из исходного документа)</span></li>
+        <li><span>остаток</span><span>последним платежом, в срок как в рассрочке с ПВ 50%</span></li>
+      </ul>
+    </article>
+  </div>
+
+  <div class="rules">
+    <div class="callout"><b>Договоры купли-продажи.</b> Сроки рассрочки такие же, как по ДДУ, кроме рассрочки с ПВ 50%: по ДКП у неё фиксированный срок 12 месяцев. По ДКП продаются: Зиларт дом 18 «Гранд»; Вейв, очередь 1 (корпуса 1–4); Парксайд, очередь 1 (корпуса 1–4); Дмитровское небо, очередь 1 (корпуса 1–3); Лучи, 6 очередь корпус 12 и 8 очередь корпуса 1–2, 3–4.</div>
+    <div class="callout"><b>Удорожание +5,5%</b> действует в проектах Парксайд (очередь 1), Лучи 2 (корпуса 1–4 и 5–10), Дмитровское небо (очередь 1). Исключение: рассрочка с ПВ 70%.</div>
+  </div>
+</section>
+
+<!-- ============ ТРАНШИ ============ -->
+<section id="tranches">
+  <h2>Траншевая ипотека</h2>
+  <p class="sub">Первый транш вносится в день подписания договора на СБР или аккредитив, раскрытие после регистрации. Последний транш не позднее директивных сроков.</p>
+  <div class="stack">
+    <article class="card">
+      <h3>Сбербанк: ПВ от 20,1% + 100 тыс. ₽, на 6 месяцев</h3>
+      <p><span class="chip">Зиларт, лот 21</span><span class="chip">Зиларт, лот 33</span><span class="chip">Обручева 30</span></p>
+      <div class="tranche" role="img" aria-label="Транш 1 около 20 процентов, транш 2 около 80 процентов"><div class="t1" style="width:22%">20,1%+100т</div><div class="t2" style="width:78%">80% − 100 тыс. ₽ через 6 мес</div></div>
+      <ul class="steps">
+        <li><span>1-й транш</span><span>ПВ от 20,1% собственными средствами + 100 тыс. ₽ кредитными</span></li>
+        <li><span>2-й транш</span><span>80% − 100 тыс. ₽ через 6 месяцев</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <h3>Сбербанк: ПВ от 30%, на 12 месяцев</h3>
+      <p><span class="chip">Зиларт, лот 21</span><span class="chip">Зиларт, лот 33</span><span class="chip">Обручева 30</span></p>
+      <div class="tranche" role="img" aria-label="Транш 1 30 процентов, транш 2 70 процентов"><div class="t1" style="width:30%">30%</div><div class="t2" style="width:70%">70% через 12 мес</div></div>
+      <ul class="steps">
+        <li><span>1-й транш</span><span>ПВ от 30%: 20,1% собственные + 10% кредитные средства</span></li>
+        <li><span>2-й транш</span><span>70% через 12 месяцев</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <h3>Сбербанк: на 2 года, два варианта</h3>
+      <p><span class="chip">только Парксайд, очередь 2</span><span class="chip warn">расчёт от красной цены сайта со скидкой 5%</span></p>
+      <h3 style="margin-top:6px">ПВ 20,1%: в первом транше 10% кредитных средств</h3>
+      <div class="tranche" role="img" aria-label="Транш 1: 20,1 процента собственные и 10 процентов кредит; транш 2: 20 процентов; транш 3: 50 процентов"><div class="t1" style="width:30%">20,1% + 10% кредит</div><div class="t2" style="width:20%">20% · 12 мес</div><div class="t3" style="width:50%">50% · ещё 12 мес</div></div>
+      <ul class="steps">
+        <li><span>1-й транш</span><span>30%: ПВ 20,1% собственные + 10% кредитные средства</span></li>
+        <li><span>2-й транш</span><span>20% через 12 месяцев</span></li>
+        <li><span>3-й транш</span><span>50% ещё через 12 месяцев</span></li>
+      </ul>
+      <h3 style="margin-top:10px">ПВ 30%: в первом транше 100 000 ₽ кредитных средств</h3>
+      <div class="tranche" role="img" aria-label="Транш 1: 30 процентов собственные и 100 тысяч рублей кредит; транш 2: 20 процентов; транш 3: остаток"><div class="t1" style="width:32%">30% + 100 тыс. ₽</div><div class="t2" style="width:20%">20% · 12 мес</div><div class="t3" style="width:48%">остаток · ещё 12 мес</div></div>
+      <ul class="steps">
+        <li><span>1-й транш</span><span>ПВ 30% собственные + 100 000 ₽ кредитные средства</span></li>
+        <li><span>2-й транш</span><span>20% через 12 месяцев</span></li>
+        <li><span>3-й транш</span><span>остаток (50% − 100 000 ₽) ещё через 12 месяцев</span></li>
+      </ul>
+      <p class="note">Первый транш — в день подписания договора на СБР/аккредитив. Последний — не позднее директивных сроков.</p>
+    </article>
+    <article class="card">
+      <h3>Совкомбанк: сниженный платёж, ПВ от 20,1%, на 12 месяцев</h3>
+      <p><span class="chip warn">только ДКП</span><span class="chip">≈ 4,4% годовых в льготный период</span></p>
+      <p><span class="chip">Зиларт, дом 18 «Гранд»</span><span class="chip">Вейв, очередь 1</span><span class="chip">Парксайд, очередь 1</span><span class="chip">Дмитровское небо, очередь 1</span><span class="chip">Лучи: 6 оч. корп. 12; 8 оч. корп. 1–2, 3–4</span></p>
+      <div class="tranche" role="img" aria-label="Транш 1 20 процентов, транш 2 80 процентов"><div class="t1" style="width:20.1%">20,1%</div><div class="t2" style="width:79.9%">≤ 80% через 12 мес</div></div>
+      <ul class="steps">
+        <li><span>1-й транш</span><span>ПВ от 20,1% собственными средствами на счёт застройщика не позднее 3 дней после подписания</span></li>
+        <li><span>2-й транш</span><span>80% или менее в зависимости от ПВ, через 12 месяцев</span></li>
+      </ul>
+      <h3 style="margin-top:8px">Как работает программа</h3>
+      <ol class="mech">
+        <li><span>Банк устанавливает льготный период 12 месяцев, в течение которого у клиента сниженный платёж.</span></li>
+        <li><span>Сниженный платёж — ежемесячная комиссия 0,5% от суммы кредита за непокрытый аккредитив в пользу застройщика. Это эквивалент ставки 4,4% годовых.</span></li>
+        <li><span>В дату сделки клиент подписывает кредитный договор, открывается аккредитив (гарантия банка по выдаче кредита и расчётам с застройщиком). ПВ оплачивается полностью в тот же день.</span></li>
+        <li><span>Выдача кредита откладывается до конца льготного периода.</span></li>
+        <li><span>После льготного периода банк выдаёт кредит без повторного андеррайтинга и переводит деньги застройщику.</span></li>
+        <li><span>Далее ставка — наименьшая из 18,49% и ключевой ставки + 5%. Это фиксируется в кредитном договоре.</span></li>
+      </ol>
+    </article>
+  </div>
+</section>
+
+<!-- ============ СЕМЕЙНАЯ ============ -->
+<section id="family">
+  <h2>Семейная ипотека</h2>
+  <p class="sub">Все жилые комплексы. Работаем с разными банками по базовым условиям и по программам субсидирования. Условия банков меняются, ставки нужно уточнять.</p>
+  <h3>Два кредитных договора</h3>
+  <p class="note" style="margin:0 0 12px">Ряд банков возобновил семейную ипотеку по двум кредитным договорам.</p>
+  <div class="table-box">
+    <table>
+      <thead><tr><th>Банк</th><th>Условия</th></tr></thead>
+      <tbody>
+        <tr><td class="proj">ВБРР</td><td>Ставка по первому КД зависит от количества детей, по второму определяется индивидуально по ряду параметров</td></tr>
+        <tr><td class="proj">Уралсиб</td><td>Единая ставка 19,99%; сумма по второму КД от 6 до 18 млн ₽</td></tr>
+        <tr><td class="proj">Сбербанк</td><td>Только комбинированная ставка 4,94–16,98%, срок до 30 лет</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ СУБСИДИИ ============ -->
+<section id="subsidy">
+  <h2>Субсидированные ставки</h2>
+  <p class="sub">Все жилые комплексы, первоначальный взнос от 20,1%. Расчёт ведётся от базовой («чёрной») стоимости на сайте; размер скидки зависит от первоначального взноса.</p>
+  <div class="table-box">
+    <table>
+      <thead><tr><th>Банк</th><th>Ставка</th><th>Срок</th><th>Ограничения</th></tr></thead>
+      <tbody id="rates"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ ТРЕЙД-ИН ============ -->
+<section id="tradein">
+  <h2>Трейд-ин</h2>
+  <p class="sub">Объект клиента реализуется только через аккредитованных партнёров.</p>
+  <div class="two">
+    <article class="card">
+      <h3>Длительное бронирование</h3>
+      <ul class="steps">
+        <li><span>срок</span><span>60 дней</span></li>
+        <li><span>стоимость</span><span>150 000 ₽</span></li>
+        <li><span>с 61 дня</span><span>новая бронь по новой стоимости ДДУ</span></li>
+      </ul>
+    </article>
+    <article class="card">
+      <h3>С заключением ДДУ / ДКП</h3>
+      <ul class="steps">
+        <li><span>ПВ 10%</span><span>второй платёж через 3 месяца, цена основного типа +2,5%</span></li>
+        <li><span>ПВ 25%</span><span>второй платёж через 6 месяцев, без увеличения стоимости</span></li>
+      </ul>
+      <p><span class="chip">маркетинговая скидка применима</span></p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ КОММЕРЦИЯ ============ -->
+<section id="commercial">
+  <h2>Коммерческие помещения</h2>
+  <p class="sub">Три набора условий: общая рассрочка без удорожания, отдельные программы для Зиларт лот 33 и для офисов в Зиларт лот 18.</p>
+  <div class="stack">
+    <article class="card">
+      <h3>Рассрочка без удорожания</h3>
+      <p><span class="chip">Лучи, корп. 9 и 15</span><span class="chip">Лучи 2, корп. 1–4 и 5–10</span><span class="chip">Вейв, очередь 1</span><span class="chip">Обручева 30</span><span class="chip">Парксайд, очередь 1</span></p>
+      <div class="table-box">
+        <table>
+          <thead><tr><th>ПВ</th><th>Ежемесячно</th><th>Остаток</th></tr></thead>
+          <tbody>
+            <tr><td class="proj">30%</td><td>50 000 ₽</td><td>через 6 месяцев</td></tr>
+            <tr><td class="proj">50%</td><td>50 000 ₽</td><td>через 12 месяцев</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout"><b>Скидки</b> для Лучи (корп. 9, 15), Лучи 2 (корп. 1–4, 5–8, 10), Вейв (очередь 1), Парксайд (очередь 1): рассрочка суммируется с маркетинговой скидкой 5%; при 100% оплате возможна скидка до 10%.</div>
+    </article>
+    <div class="two">
+      <article class="card">
+        <h3>Зиларт, лот 33</h3>
+        <ul class="steps">
+          <li><span>ПВ 50%</span><span>остаток 50% до сентября 2027</span></li>
+          <li><span>ПВ 30%</span><span>платежи раз в квартал, остаток до сентября 2027</span></li>
+        </ul>
+        <p><span class="chip warn">удорожание +8%</span><span class="chip">скидка до 5% по согласованию</span></p>
+      </article>
+      <article class="card">
+        <h3>Зиларт, лот 18 — офисы</h3>
+        <ul class="steps">
+          <li><span>ПВ 50%</span><span>50 000 ₽/мес, остаток до ноября 2027</span></li>
+          <li><span>ПВ 30%</span><span>50 000 ₽/мес, остаток до мая 2027</span></li>
+        </ul>
+        <p><span class="chip">при 100% оплате скидка до 10%</span></p>
+      </article>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer><div class="wrap">Условия реализации на ноябрь 2026 года, собраны из внутреннего документа. Ставки банков могут меняться, перед сделкой уточняйте актуальные условия.</div></footer>
+
+<script>
+const rates = [
+  ["Сбербанк", 13.0, "до 30 лет", ""],
+  ["Альфа-Банк", 12.49, "до 15 лет", ""],
+  ["Альфа-Банк", 12.59, "до 20 лет", ""],
+  ["Совкомбанк", 12.49, "до 15 лет", ""],
+  ["МКБ", 11.9, "13–15 лет", ""],
+  ["МКБ", 12.99, "до 30 лет", ""],
+  ["ВТБ", 13.4, "до 30 лет", ""],
+  ["Т-Банк", 12.5, "до 30 лет", "только ЖК по ДДУ"],
+].sort((a, b) => a[1] - b[1]);
+const min = 11, max = 14;
+document.getElementById("rates").innerHTML = rates.map(([bank, r, term, lim]) => `
+  <tr>
+    <td class="proj">${bank}</td>
+    <td class="rate">${r.toFixed(2).replace(".", ",").replace(/,?0$/, m => m === ",0" ? "" : m)}%<div class="rate-bar" aria-hidden="true"><i style="width:${((r - min) / (max - min) * 100).toFixed(0)}%"></i></div></td>
+    <td>${term}</td>
+    <td>${lim ? `<span class="chip warn">${lim}</span>` : '<span class="dash">—</span>'}</td>
+  </tr>`).join("");
+</script>
+<script>
+(() => {
+  const P = [
+    { id: "zilart-18", g: "Зиларт", n: "лот 18", k: "Дом 18 «Гранд»", dkp: true, t50: "до 12 месяцев", com: ["zil18"] },
+    { id: "zilart-21", g: "Зиларт", n: "лот 21", t50: "до октября 2027", tr: ["s6", "s12"] },
+    { id: "zilart-33", g: "Зиларт", n: "лот 33", t50: "до сентября 2027", tr: ["s6", "s12"], com: ["zil33"] },
+    { id: "obrucheva-30", g: "Обручева 30", n: "", t50: "до сентября 2027", tr: ["s6", "s12"], com: ["base"] },
+    { id: "wave-1", g: "Вейв", n: "очередь 1", k: "Корпуса 1 (Azure), 2 (Bondi), 3 (Indigo), 4 (Sapphire)", dkp: true, t50: "до 12 месяцев", com: ["base", "disc"] },
+    { id: "wave-2", g: "Вейв", n: "очередь 2", t50: "до июня 2027" },
+    { id: "parkside-1", g: "Парксайд", n: "очередь 1", k: "Корпуса 1–4", dkp: true, t50: "до 12 месяцев", mk: true, com: ["base", "disc"] },
+    { id: "parkside-2", g: "Парксайд", n: "очередь 2", t50: "до ноября 2027", tr: ["s24a", "s24b"] },
+    { id: "luchi-dkp", g: "Лучи", n: "корпуса 1–4, 12", k: "6 очередь: корпус 12 · 8 очередь: корпуса 1–2 и 3–4", dkp: true, t50: "12 месяцев" },
+    { id: "luchi", g: "Лучи", n: "корпуса 9, 15", k: "Коммерческие помещения", res: false, com: ["base", "disc"] },
+    { id: "luchi2-1-4", g: "Лучи 2", n: "корпуса 1–4", t50: null, mk: true, com: ["base", "disc"] },
+    { id: "luchi2-5-10", g: "Лучи 2", n: "корпуса 5–10", t50: "до марта 2027", mk: true, com: ["base", "disc"], comNote: "Скидки 5% и до 10% указаны для корпусов 5–8 и 10. Для корпуса 9 в документе их нет." },
+    { id: "dn-1", g: "Дмитровское небо", n: "очередь 1", k: "Корпуса 1–3", dkp: true, t50: "до 12 месяцев", mk: true },
+    { id: "dn-2-5", g: "Дмитровское небо", n: "корпус 2.5", t50: "до мая 2027" },
+  ];
+  const TR = {
+    s6: { name: "Сбербанк: ПВ от 20,1% + 100 тыс. ₽, на 6 месяцев", bar: [["t1", 22, "20,1%+100т"], ["t2", 78, "80% − 100 тыс. ₽ через 6 мес"]],
+      steps: [["1-й транш", "ПВ от 20,1% собственными + 100 тыс. ₽ кредитными, в день подписания на СБР/аккредитив"], ["2-й транш", "80% − 100 тыс. ₽ через 6 месяцев, не позднее директивных сроков"]] },
+    s12: { name: "Сбербанк: ПВ от 30%, на 12 месяцев", bar: [["t1", 30, "30%"], ["t2", 70, "70% через 12 мес"]],
+      steps: [["1-й транш", "ПВ от 30%: 20,1% собственные + 10% кредитные"], ["2-й транш", "70% через 12 месяцев, не позднее директивных сроков"]] },
+    s24a: { price: 1, name: "Сбербанк: ПВ 20,1%, на 2 года", bar: [["t1", 20.1, "ПВ 20,1%"], ["t1", 10, "+10% кредит"], ["t2", 20, "20% · 12 мес"], ["t3", 49.9, "50% · ещё 12 мес"]],
+      steps: [["1-й транш", "30%: ПВ 20,1% собственные + 10% кредитные средства"], ["2-й транш", "20% через 12 месяцев"], ["3-й транш", "50% ещё через 12 месяцев"]] },
+    s24b: { price: 1, name: "Сбербанк: ПВ 30%, на 2 года", bar: [["t1", 32, "ПВ 30% + 100 тыс. ₽"], ["t2", 20, "20% · 12 мес"], ["t3", 48, "остаток · ещё 12 мес"]],
+      steps: [["1-й транш", "ПВ 30% собственные + 100 000 ₽ кредитные средства"], ["2-й транш", "20% через 12 месяцев"], ["3-й транш", "остаток (50% − 100 000 ₽) ещё через 12 месяцев"]] },
+  };
+  const esc = s => String(s);
+  const groups = [...new Set(P.map(p => p.g))];
+  const picker = document.getElementById("picker");
+  picker.innerHTML = groups.map(g => `<div class="pgroup"><span>${g}</span>${
+    P.filter(p => p.g === g).map(p => `<button type="button" class="pbtn" id="pick-${p.id}" data-id="${p.id}" aria-pressed="false">${p.n || p.g}</button>`).join("")
+  }</div>`).join("");
+
+  const steps = rows => `<ul class="steps">${rows.map(([a, b]) => `<li><span>${a}</span><span>${b}</span></li>`).join("")}</ul>`;
+  const chips = arr => arr.filter(Boolean).map(([t, w]) => `<span class="chip${w ? " warn" : ""}">${t}</span>`).join("");
+
+  function residential(p) {
+    const mk = p.mk ? "+5,5%" : null;
+    const t50 = p.t50 || "срок в документе не указан";
+    const rows = [
+      ["20%", "50 000 ₽", "через 3 месяца", mk, ""],
+      ["25%", "50 000 ₽; на 6-й месяц — 25%", "последним платежом, общий срок не более 9 месяцев", mk, ""],
+      ["30%", "50 000 ₽", "через 6 месяцев", mk, ""],
+      ["50%", "50 000 ₽", p.dkp ? "12 месяцев (ДКП, срок фиксированный)" : t50, mk, "скидка до 2%"],
+      ["70%", "50 000 ₽", "через 6 месяцев", null, "скидка до 5%"],
+      ["20% · 8%", "под 8% годовых", `последним платежом, ${t50}`, mk, ""],
+    ];
+    return `<article class="card block"><h4>Рассрочка на квартиры</h4>
+      <div class="table-box"><table><thead><tr><th>ПВ</th><th>Ежемесячно</th><th>Остаток</th><th>Удорожание</th><th>Скидка от красной цены сайта</th></tr></thead><tbody>
+      ${rows.map(r => `<tr><td class="proj">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3] ? `<span class="chip warn">${r[3]}</span>` : '<span class="dash">нет</span>'}</td><td>${r[4] ? `<span class="chip">${r[4]}</span>` : '<span class="dash">—</span>'}</td></tr>`).join("")}
+      </tbody></table></div>
+      <p class="note">${p.dkp ? "Продажа по ДКП: сроки как по ДДУ, кроме рассрочки с ПВ 50% — у неё фиксированный срок 12 месяцев." : ""}${p.mk ? " Удорожание +5,5% не применяется только к рассрочке с ПВ 70%." : ""}</p></article>`;
+  }
+
+  function mortgage(p) {
+    const card = (kind, title, body) => `<article class="card block"><h4>${kind}</h4>${title ? `<h3>${title}</h3>` : ""}${body}</article>`;
+    const bar = b => `<div class="tranche" role="img" aria-label="${b.map(x => x[2]).join(", ")}">${b.map(([c, w, l]) => `<div class="${c}" style="width:${w}%">${l}</div>`).join("")}</div>`;
+    const tr = (p.tr || []).map(k => { const t = TR[k]; return card("Траншевая ипотека · Сбербанк", t.name.replace("Сбербанк: ", ""), (t.price ? `<p>${chips([["расчёт от красной цены сайта со скидкой 5%", 1]])}</p>` : "") + bar(t.bar) + steps(t.steps)); });
+    const sovcom = card("Сниженный платёж · Совкомбанк", "ПВ от 20,1%, на 12 месяцев",
+      `<p>${chips([["только ДКП", 1], ["≈ 4,4% годовых в льготный период"]])}</p>` +
+      bar([["t1", 20.1, "20,1%"], ["t2", 79.9, "≤ 80% через 12 мес"]]) +
+      steps([
+        ["1-й транш", "ПВ от 20,1% собственными на счёт застройщика не позднее 3 дней после подписания"],
+        ["2-й транш", "80% или менее, через 12 месяцев"],
+        ["Льготный период", "12 месяцев: комиссия 0,5% от суммы кредита в месяц за аккредитив"],
+        ["После", "кредит выдаётся без повторного андеррайтинга; ставка — меньшая из 18,49% и ключевой + 5%"],
+      ]) + `<details class="more"><summary>Механика программы полностью</summary><ol class="mech">         <li><span>Банк устанавливает льготный период 12 месяцев, в течение которого у клиента сниженный платёж.</span></li>         <li><span>Сниженный платёж — ежемесячная комиссия 0,5% от суммы кредита за непокрытый аккредитив в пользу застройщика. Это эквивалент ставки 4,4% годовых.</span></li>         <li><span>В дату сделки клиент подписывает кредитный договор, открывается аккредитив (гарантия банка по выдаче кредита и расчётам с застройщиком). ПВ оплачивается полностью в тот же день.</span></li>         <li><span>Выдача кредита откладывается до конца льготного периода.</span></li>         <li><span>После льготного периода банк выдаёт кредит без повторного андеррайтинга и переводит деньги застройщику.</span></li>         <li><span>Далее ставка — наименьшая из 18,49% и ключевой ставки + 5%. Это фиксируется в кредитном договоре.</span></li>       </ol></details>`);
+    const family = card("Семейная ипотека", "Два кредитных договора",
+      steps([
+        ["ВБРР", "1-й КД — ставка зависит от количества детей; 2-й КД — индивидуально"],
+        ["Уралсиб", "единая ставка 19,99%; сумма по 2-му КД от 6 до 18 млн ₽"],
+        ["Сбербанк", "только комбинированная ставка 4,94–16,98%, срок до 30 лет"],
+      ]) + `<p class="note">Также работаем с разными банками по базовым условиям и программам субсидирования. Ставки уточняйте.</p>`);
+    const subs = [["МКБ", "11,9%", "13–15 лет"], ["Альфа-Банк", "12,49%", "до 15 лет"], ["Совкомбанк", "12,49%", "до 15 лет"], ["Т-Банк", "12,5%", "до 30 лет · только ДДУ"], ["Альфа-Банк", "12,59%", "до 20 лет"], ["МКБ", "12,99%", "до 30 лет"], ["Сбербанк", "13%", "до 30 лет"], ["ВТБ", "13,4%", "до 30 лет"]];
+    const subsRows = p.dkp ? subs.filter(r => r[0] !== "Т-Банк") : subs;
+    const subsidy = card("Субсидированные ставки", "ПВ от 20,1%",
+      `<div class="table-box"><table><thead><tr><th>Банк</th><th>Ставка</th><th>Срок</th></tr></thead><tbody>${subsRows.map(r => `<tr><td class="proj">${r[0]}</td><td><b>${r[1]}</b></td><td>${r[2]}</td></tr>`).join("")}</tbody></table></div>
+       <p class="note">Расчёт от базовой («чёрной») стоимости на сайте; скидка зависит от ПВ.</p>`);
+    const noTr = (p.tr || []).length ? [] : [`<article class="card block"><h4>Траншевая ипотека · Сбербанк</h4><p class="empty">Для этого проекта не предусмотрена.</p></article>`];
+    return `<h3 class="panel-h">Ипотека</h3><div class="two">${[...tr, ...noTr, ...(p.dkp ? [sovcom] : []), family].join("")}</div>${subsidy}`;
+  }
+
+  function tradein() {
+    return `<article class="card block"><h4>Трейд-ин</h4>${steps([
+      ["Бронь", "60 дней за 150 000 ₽; с 61 дня новая бронь по новой стоимости ДДУ"],
+      ["ПВ 10%", "второй платёж через 3 месяца, цена +2,5%"],
+      ["ПВ 25%", "второй платёж через 6 месяцев, без удорожания"],
+    ])}<p>${chips([["маркетинговая скидка применима"]])}</p></article>`;
+  }
+
+  function commercial(p) {
+    const c = p.com || [];
+    if (!c.length) return `<article class="card block"><h4>Коммерческие помещения</h4><p class="empty">Условий по коммерции для этого проекта в документе нет.</p></article>`;
+    let html = "";
+    if (c.includes("base")) html += `<h3>Рассрочка без удорожания</h3>${steps([["ПВ 30%", "50 000 ₽/мес, остаток через 6 месяцев"], ["ПВ 50%", "50 000 ₽/мес, остаток через 12 месяцев"]])}`;
+    if (c.includes("disc")) html += `<p>${chips([["+ маркетинговая скидка 5%"], ["при 100% оплате скидка до 10%"]])}</p>`;
+    if (c.includes("zil33")) html += `<h3>Коммерция, лот 33</h3>${steps([["ПВ 50%", "остаток 50% до сентября 2027"], ["ПВ 30%", "платежи раз в квартал, остаток до сентября 2027"]])}<p>${chips([["удорожание +8%", 1], ["скидка до 5% по согласованию"]])}</p>`;
+    if (c.includes("zil18")) html += `<h3>Офисные помещения</h3>${steps([["ПВ 50%", "50 000 ₽/мес, остаток до ноября 2027"], ["ПВ 30%", "50 000 ₽/мес, остаток до мая 2027"]])}<p>${chips([["при 100% оплате скидка до 10%"]])}</p>`;
+    if (p.comNote) html += `<p class="note">${p.comNote}</p>`;
+    return `<article class="card block"><h4>Коммерческие помещения</h4>${html}</article>`;
+  }
+
+  function render(id) {
+    const p = P.find(x => x.id === id) || P[0];
+    picker.querySelectorAll(".pbtn").forEach(b => b.setAttribute("aria-pressed", b.dataset.id === p.id));
+    const res = p.res !== false;
+    const trLabel = (p.tr || []).map(k => ({ s6: "6 мес", s12: "12 мес", s24a: "2 года (ПВ 20,1%)", s24b: "2 года (ПВ 30%)" })[k]).join(", ");
+    document.getElementById("panel").innerHTML = `
+      <div class="phead"><h3>${p.g}${p.n ? `<small>${p.n}${p.k ? " · " + p.k : ""}</small>` : ""}</h3>
+        <dl class="facts">${res ? `
+          <div><dt>Остаток при ПВ 50%</dt><dd>${p.t50 || "не указан"}</dd></div>
+          <div><dt>Удорожание рассрочки</dt><dd class="${p.mk ? "hot" : ""}">${p.mk ? "+5,5%" : "нет"}</dd></div>
+          <div><dt>Транши Сбербанка</dt><dd>${trLabel || "нет"}</dd></div>` : `
+          <div><dt>Жильё</dt><dd>в документе только коммерция</dd></div>`}
+          ${res ? `<div><dt>Договор</dt><dd>${p.dkp ? "ДКП" : "ДДУ"}</dd></div>` : ""}
+          <div><dt>Коммерция</dt><dd>${(p.com || []).length ? "есть условия" : "нет данных"}</dd></div>
+        </dl></div>
+      ${res ? residential(p) + mortgage(p) + tradein() : ""}
+      ${commercial(p)}`;
+  }
+
+  let current = P[1].id;
+  try { current = localStorage.getItem("proj") || current; } catch (e) {}
+  const fromHash = () => { const h = location.hash.slice(1); return P.some(p => p.id === h) ? h : null; };
+  function select(id, scroll) {
+    current = id; render(id);
+    try { localStorage.setItem("proj", id); } catch (e) {}
+    if (scroll) document.getElementById("by-project").scrollIntoView();
+  }
+  picker.addEventListener("click", e => {
+    const b = e.target.closest(".pbtn"); if (!b) return;
+    if (location.hash.slice(1) !== b.dataset.id) history.replaceState(null, "", "#" + b.dataset.id);
+    select(b.dataset.id, false);
+  });
+  window.addEventListener("hashchange", () => { const h = fromHash(); if (h) select(h, true); });
+  const h = fromHash();
+  select(h || current, !!h);
+})();
+</script>
+
+
+</body>
+</html>
