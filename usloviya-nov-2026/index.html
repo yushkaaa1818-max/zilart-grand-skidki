@@ -160,6 +160,26 @@ dialog.promo::backdrop { background: rgba(20, 21, 25, .62); }
 .promo-body { padding: 18px; display: grid; gap: 14px; }
 .promo-go { justify-self: start; border: 0; cursor: pointer; background: var(--graphite); color: #fff; font: 700 14px/1 var(--font-display); padding: 14px 20px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
 .promo-go:hover, .promo-go:focus-visible { background: var(--accent); outline: none; }
+
+footer a.foot-stats { color: #d9dade; font-weight: 600; }
+dialog.sdlg { border: 0; padding: 0; width: min(760px, calc(100% - 32px)); max-height: calc(100% - 32px); background: var(--bg); color: var(--fg); overflow: auto; }
+dialog.sdlg::backdrop { background: rgba(20, 21, 25, .62); }
+.sdlg .promo-head { background: var(--graphite); }
+.sbody { padding: 18px; display: grid; gap: 14px; }
+.sbody .sub { margin: 0; }
+[hidden] { display: none !important; }
+.sout { display: grid; gap: 12px; color: var(--fg); }
+.sout h3 { margin: 6px 0 0; }
+.sform { display: flex; gap: 8px; flex-wrap: wrap; }
+.sform input { flex: 1 1 180px; min-width: 0; font: 600 15px/1 var(--font-body); padding: 12px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.sform input:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.stiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.stiles div { background: var(--surface); padding: 14px 16px; display: grid; gap: 4px; }
+.stiles b { font: 800 28px/1 var(--font-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+.stiles span { font-size: 13px; color: var(--muted); }
+.srow { display: flex; gap: 8px; flex-wrap: wrap; }
+.sbtn { border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: 700 13px/1 var(--font-display); padding: 11px 14px; cursor: pointer; text-decoration: none; }
+.sbtn:hover, .sbtn:focus-visible { border-color: var(--accent); color: var(--accent); outline: none; }
 </style>
 </head>
 <body>
@@ -176,11 +196,22 @@ dialog.promo::backdrop { background: rgba(20, 21, 25, .62); }
   <div class="promo-head"><div><div class="eyebrow">Ноябрь 2026</div><h2 id="promo-title">Супер предложения</h2></div><button type="button" class="promo-x" id="promo-x" aria-label="Закрыть">×</button></div>
   <div class="promo-body">
   <div class="offers">
-    <a class="offer" href="#parkside-2"><span class="o-proj">ЖК Парксайд</span><span class="o-big">от 1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека с ПВ 20–30%. Скидка 5% от красной цены сайта сохраняется.</span><span class="o-more">Условия Парксайда →</span></a>
-    <a class="offer" href="#zilart-21"><span class="o-proj">ЖК Зиларт</span><span class="o-big">1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека до 12 месяцев с платежами 1 700 ₽ в месяц.</span><span class="o-more">Условия Зиларта →</span></a>
-    <a class="offer" href="#sovcombank"><span class="o-proj">Готовые дома</span><span class="o-big">4,4% <small>на первый год</small></span><span class="o-text">Ставка от Совкомбанка для всех готовых домов, продажа по ДКП.</span><span class="o-more">Как работает →</span></a>
+    <a class="offer" data-offer="parkside" href="#parkside-2"><span class="o-proj">ЖК Парксайд</span><span class="o-big">от 1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека с ПВ 20–30%. Скидка 5% от красной цены сайта сохраняется.</span><span class="o-more">Условия Парксайда →</span></a>
+    <a class="offer" data-offer="zilart" href="#zilart-21"><span class="o-proj">ЖК Зиларт</span><span class="o-big">1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека до 12 месяцев с платежами 1 700 ₽ в месяц.</span><span class="o-more">Условия Зиларта →</span></a>
+    <a class="offer" data-offer="ready" href="#sovcombank"><span class="o-proj">Готовые дома</span><span class="o-big">4,4% <small>на первый год</small></span><span class="o-text">Ставка от Совкомбанка для всех готовых домов, продажа по ДКП.</span><span class="o-more">Как работает →</span></a>
   </div>
   <button type="button" class="promo-go" id="promo-go">Смотреть все условия</button>
+  </div>
+</dialog>
+<dialog class="sdlg" id="stats-dlg" aria-labelledby="stats-title">
+  <div class="promo-head"><div><div class="eyebrow">Отчёт владельца</div><h2 id="stats-title">Статистика сайта</h2></div><button type="button" class="promo-x" id="stats-x" aria-label="Закрыть">×</button></div>
+  <div class="sbody">
+    <p class="sub">Считаются открытия сайта, просмотры условий по ЖК и нажатия на супер предложения. IP-адреса и контакты посетителей не сохраняются.</p>
+    <form class="sform" id="stats-form">
+      <input id="stats-code" type="password" autocomplete="off" placeholder="Код владельца" aria-label="Код владельца">
+      <button class="promo-go" type="submit">Показать</button>
+    </form>
+    <div id="stats-out" class="sout"></div>
   </div>
 </dialog>
 <nav class="sections" aria-label="Разделы">
@@ -201,9 +232,9 @@ dialog.promo::backdrop { background: rgba(20, 21, 25, .62); }
 <section class="offers-band" id="offers">
   <h2>Супер предложения</h2>
   <div class="offers">
-    <a class="offer" href="#parkside-2"><span class="o-proj">ЖК Парксайд</span><span class="o-big">от 1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека с ПВ 20–30%. Скидка 5% от красной цены сайта сохраняется.</span><span class="o-more">Условия Парксайда →</span></a>
-    <a class="offer" href="#zilart-21"><span class="o-proj">ЖК Зиларт</span><span class="o-big">1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека до 12 месяцев с платежами 1 700 ₽ в месяц.</span><span class="o-more">Условия Зиларта →</span></a>
-    <a class="offer" href="#sovcombank"><span class="o-proj">Готовые дома</span><span class="o-big">4,4% <small>на первый год</small></span><span class="o-text">Ставка от Совкомбанка для всех готовых домов, продажа по ДКП.</span><span class="o-more">Как работает →</span></a>
+    <a class="offer" data-offer="parkside" href="#parkside-2"><span class="o-proj">ЖК Парксайд</span><span class="o-big">от 1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека с ПВ 20–30%. Скидка 5% от красной цены сайта сохраняется.</span><span class="o-more">Условия Парксайда →</span></a>
+    <a class="offer" data-offer="zilart" href="#zilart-21"><span class="o-proj">ЖК Зиларт</span><span class="o-big">1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека до 12 месяцев с платежами 1 700 ₽ в месяц.</span><span class="o-more">Условия Зиларта →</span></a>
+    <a class="offer" data-offer="ready" href="#sovcombank"><span class="o-proj">Готовые дома</span><span class="o-big">4,4% <small>на первый год</small></span><span class="o-text">Ставка от Совкомбанка для всех готовых домов, продажа по ДКП.</span><span class="o-more">Как работает →</span></a>
   </div>
 </section>
 
@@ -469,8 +500,17 @@ dialog.promo::backdrop { background: rgba(20, 21, 25, .62); }
 
 </main>
 
-<footer><div class="wrap">Условия реализации на ноябрь 2026 года, собраны из внутреннего документа. Ставки банков могут меняться, перед сделкой уточняйте актуальные условия.</div></footer>
+<footer><div class="wrap">Условия реализации на ноябрь 2026 года, собраны из внутреннего документа. Ставки банков могут меняться, перед сделкой уточняйте актуальные условия.<br><a href="#stats" class="foot-stats">Статистика сайта (для владельца)</a></div></footer>
 
+<script>
+// Статистика: события уходят в Google-таблицу владельца (без IP и контактов). Пустой адрес — сбор выключен.
+const STATS_URL = "";
+let inFrame = true; try { inFrame = window.self !== window.top; } catch (e) {}
+function track(e, n) {
+  if (!STATS_URL || inFrame) return;
+  try { navigator.sendBeacon(STATS_URL, new Blob([JSON.stringify({ e, n: n || "" })], { type: "text/plain" })); } catch (err) {}
+}
+</script>
 <script>
 const rates = [
   ["Сбербанк", 13.0, "до 30 лет", ""],
@@ -626,16 +666,18 @@ document.getElementById("rates").innerHTML = rates.map(([bank, r, term, lim]) =>
     const b = e.target.closest(".pbtn"); if (!b) return;
     if (location.hash.slice(1) !== b.dataset.id) history.replaceState(null, "", "#" + b.dataset.id);
     select(b.dataset.id, false);
+    window.track && track("proj", b.dataset.id);
   });
-  window.addEventListener("hashchange", () => { const h = fromHash(); if (h) select(h, true); });
+  window.addEventListener("hashchange", () => { const h = fromHash(); if (h) { select(h, true); window.track && track("proj", h); } });
   const h = fromHash();
+  if (h && window.track) track("proj", h);
   select(h || current, !!h);
 })();
 </script>
 <script>
 (() => {
   const d = document.getElementById("promo");
-  if (!d || typeof d.showModal !== "function") return;
+  if (!d || typeof d.showModal !== "function" || location.hash === "#stats") return;
   const close = () => { if (d.open) d.close(); };
   document.getElementById("promo-x").addEventListener("click", close);
   document.getElementById("promo-go").addEventListener("click", close);
@@ -643,6 +685,54 @@ document.getElementById("rates").innerHTML = rates.map(([bank, r, term, lim]) =>
   try { d.showModal(); } catch (e) {}
 })();
 </script>
+<script>
+(() => {
+  const PROJ = { "zilart-18": "Зиларт, лот 18", "zilart-21": "Зиларт, лот 21", "zilart-33": "Зиларт, лот 33", "obrucheva-30": "Обручева 30", "wave-1": "Вейв, очередь 1", "wave-2": "Вейв, очередь 2", "parkside-1": "Парксайд, очередь 1", "parkside-2": "Парксайд, очередь 2", "luchi-dkp": "Лучи, корпуса 1–4, 12", "luchi": "Лучи, корпуса 9, 15", "luchi2-1-4": "Лучи 2, корпуса 1–4", "luchi2-5-10": "Лучи 2, корпуса 5–10", "dn-1": "Дмитровское небо, очередь 1", "dn-2-5": "Дмитровское небо, корпус 2.5" };
+  const OFF = { parkside: "Парксайд: транши от 1 700 ₽", zilart: "Зиларт: транши 1 700 ₽", ready: "Готовые дома: 4,4%" };
+  const KEY = "usl-owner-code";
+  const getCode = () => { try { const v = JSON.parse(localStorage.getItem(KEY) || "null"); if (v && v.exp > Date.now()) return v.code; } catch (e) {} return ""; };
+  const setCode = c => { try { c ? localStorage.setItem(KEY, JSON.stringify({ code: c, exp: Date.now() + 864e5 })) : localStorage.removeItem(KEY); } catch (e) {} };
+  const esc = v => String(v).replace(/[&<>"]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]);
+  const num = v => (v || 0).toLocaleString("ru-RU");
+  const dlg = document.getElementById("stats-dlg"), out = document.getElementById("stats-out"), form = document.getElementById("stats-form");
+  const table = (head, rows, empty) => `<div class="table-box"><table><thead><tr>${head.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.length ? rows.join("") : `<tr><td colspan="${head.length}">${empty}</td></tr>`}</tbody></table></div>`;
+  function html(r) {
+    const t = r.totals || {};
+    const pr = Object.entries(r.projects || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr><td class="proj">${esc(PROJ[k] || k)}</td><td>${num(v)}</td></tr>`);
+    const of = Object.entries(r.offers || {}).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<tr><td class="proj">${esc(OFF[k] || k)}</td><td>${num(v)}</td></tr>`);
+    const dy = Object.entries(r.days || {}).sort((a, b) => b[0].localeCompare(a[0])).map(([d, v]) => `<tr><td>${esc(d.split("-").reverse().join("."))}</td><td>${num(v.visit)}</td><td>${num(v.proj)}</td><td>${num(v.offer)}</td></tr>`);
+    return `<p class="sub">Последние 30 дней · обновлено ${esc(r.updated ? new Date(r.updated).toLocaleString("ru-RU") : "")}</p>
+      <div class="stiles"><div><b>${num(t.visit)}</b><span>Открытия сайта</span></div><div><b>${num(t.proj)}</b><span>Просмотры условий ЖК</span></div><div><b>${num(t.offer)}</b><span>Нажатия на супер предложения</span></div></div>
+      <h3>По ЖК</h3>${table(["ЖК", "Просмотры"], pr, "Пока нет просмотров")}
+      <h3>Супер предложения</h3>${table(["Предложение", "Нажатия"], of, "Пока нет нажатий")}
+      <h3>По дням</h3>${table(["Дата", "Открытия", "ЖК", "Предложения"], dy, "Пока нет данных")}
+      <div class="srow">${/^https:\/\//.test(r.sheetUrl || "") ? `<a class="sbtn" href="${esc(r.sheetUrl)}" target="_blank" rel="noopener">Открыть Google-таблицу ↗</a>` : ""}<button class="sbtn" id="stats-logout" type="button">Выйти</button></div>`;
+  }
+  async function load(code) {
+    out.textContent = "Загружаю…";
+    try {
+      const r = await (await fetch(`${STATS_URL}?code=${encodeURIComponent(code)}`)).json();
+      if (!r.ok) { setCode(""); form.hidden = false; out.textContent = "Неверный код. Попробуйте ещё раз."; return; }
+      setCode(code); form.hidden = true; out.innerHTML = html(r);
+      document.getElementById("stats-logout").onclick = () => { setCode(""); form.hidden = false; out.textContent = ""; };
+    } catch (e) { out.textContent = "Не удалось загрузить статистику. Проверьте интернет и попробуйте ещё раз."; }
+  }
+  function open() {
+    if (!STATS_URL) { form.hidden = true; out.textContent = "Сбор статистики ещё не подключён."; }
+    else { const c = getCode(); form.hidden = !!c; out.textContent = ""; if (c) load(c); }
+    if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute("open", ""); } }
+  }
+  function close() { if (dlg.open) dlg.close(); }
+  dlg.addEventListener("close", () => { if (location.hash === "#stats") history.replaceState(null, "", location.pathname + location.search); });
+  document.getElementById("stats-x").onclick = close;
+  dlg.addEventListener("click", e => { if (e.target === dlg) close(); });
+  form.addEventListener("submit", e => { e.preventDefault(); const c = document.getElementById("stats-code").value.trim(); if (c && STATS_URL) load(c); });
+  window.addEventListener("hashchange", () => { if (location.hash === "#stats") open(); });
+  document.querySelectorAll("a.offer").forEach(a => a.addEventListener("click", () => track("offer", a.dataset.offer)));
+  if (location.hash === "#stats") open(); else track("visit");
+})();
+</script>
+
 
 
 
