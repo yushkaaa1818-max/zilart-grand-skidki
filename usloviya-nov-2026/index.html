@@ -125,7 +125,8 @@ a { color: var(--accent); font-weight: 600; }
 .facts dd { margin: 0; font: 800 16px/1.3 var(--font-display); }
 .facts dd.hot { color: #ff6b86; }
 .panel-h { font: 800 18px/1.2 var(--font-display); text-transform: uppercase; margin: 14px 0 0; }
-.tranche div { min-width: max-content; }
+.tranche { flex-wrap: wrap; height: auto !important; }
+.tranche div { min-width: max-content; flex-grow: 1; height: 32px; }
 .block h4 { font: 800 14px/1.2 var(--font-display); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 10px; color: var(--accent); }
 .empty { color: var(--muted); font-size: 14px; }
 td.proj a { color: inherit; text-decoration: none; border-bottom: 1px dashed var(--muted); }
@@ -136,6 +137,29 @@ td.proj a:hover { color: var(--accent); border-color: var(--accent); }
 .more[open] summary::after { transform: rotate(180deg); }
 .more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .more .mech { margin-top: 12px; font-size: 14px; }
+
+.offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.offer { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 18px 18px 16px; background: var(--surface); color: var(--fg); text-decoration: none; min-width: 0; border-top: 4px solid var(--accent); clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%); }
+.offer:hover { background: var(--accent-soft); }
+.offer:focus-visible { outline: 3px solid var(--graphite); outline-offset: 2px; }
+.offer .o-proj { font: 800 11px/1 var(--font-display); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.offer .o-big { font: 800 26px/1.05 var(--font-display); color: var(--fg); }
+.offer .o-big small { font-size: 14px; font-weight: 700; color: var(--muted); }
+.offer .o-text { font-size: 14px; line-height: 1.5; }
+.offer .o-more { margin-top: auto; font: 700 13px/1 var(--font-display); color: var(--accent); }
+.offers-band { padding-block: 32px 0; }
+.offers-band h2 { margin-bottom: 14px; }
+dialog.promo { border: 0; padding: 0; width: min(920px, calc(100% - 32px)); max-height: calc(100% - 32px); background: var(--bg); color: var(--fg); overflow: auto; }
+dialog.promo::backdrop { background: rgba(20, 21, 25, .62); }
+.promo-head { background: var(--accent); color: #fff; padding: 22px 22px 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.promo-head .eyebrow { color: rgba(255,255,255,.8); }
+.promo-head h2 { color: #fff; margin: 8px 0 0; font-size: clamp(22px, 4vw, 30px); }
+.promo-head h2::before { background: #fff; }
+.promo-x { flex: none; border: 0; background: rgba(255,255,255,.16); color: #fff; width: 40px; height: 40px; font: 700 22px/1 var(--font-display); cursor: pointer; }
+.promo-x:hover, .promo-x:focus-visible { background: rgba(255,255,255,.3); outline: none; }
+.promo-body { padding: 18px; display: grid; gap: 14px; }
+.promo-go { justify-self: start; border: 0; cursor: pointer; background: var(--graphite); color: #fff; font: 700 14px/1 var(--font-display); padding: 14px 20px; clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); }
+.promo-go:hover, .promo-go:focus-visible { background: var(--accent); outline: none; }
 </style>
 </head>
 <body>
@@ -148,8 +172,20 @@ td.proj a:hover { color: var(--accent); border-color: var(--accent); }
   <p class="lead">Рассрочки, траншевая и семейная ипотека, субсидированные ставки, трейд-ин и условия по коммерческим помещениям. Выберите жилой комплекс, чтобы увидеть его условия; ниже сводная таблица и детали всех программ.</p>
 </div></header>
 
+<dialog class="promo" id="promo" aria-labelledby="promo-title">
+  <div class="promo-head"><div><div class="eyebrow">Ноябрь 2026</div><h2 id="promo-title">Супер предложения</h2></div><button type="button" class="promo-x" id="promo-x" aria-label="Закрыть">×</button></div>
+  <div class="promo-body">
+  <div class="offers">
+    <a class="offer" href="#parkside-2"><span class="o-proj">ЖК Парксайд</span><span class="o-big">от 1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека с ПВ 20–30%. Скидка 5% от красной цены сайта сохраняется.</span><span class="o-more">Условия Парксайда →</span></a>
+    <a class="offer" href="#zilart-21"><span class="o-proj">ЖК Зиларт</span><span class="o-big">1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека до 12 месяцев с платежами 1 700 ₽ в месяц.</span><span class="o-more">Условия Зиларта →</span></a>
+    <a class="offer" href="#sovcombank"><span class="o-proj">Готовые дома</span><span class="o-big">4,4% <small>на первый год</small></span><span class="o-text">Ставка от Совкомбанка для всех готовых домов, продажа по ДКП.</span><span class="o-more">Как работает →</span></a>
+  </div>
+  <button type="button" class="promo-go" id="promo-go">Смотреть все условия</button>
+  </div>
+</dialog>
 <nav class="sections" aria-label="Разделы">
   <div class="wrap">
+    <a href="#offers">Супер предложения</a>
     <a href="#by-project">Условия по ЖК</a>
     <a href="#projects">Сводка по ЖК</a>
     <a href="#installments">Рассрочки</a>
@@ -162,6 +198,15 @@ td.proj a:hover { color: var(--accent); border-color: var(--accent); }
 </nav>
 
 <main class="wrap">
+<section class="offers-band" id="offers">
+  <h2>Супер предложения</h2>
+  <div class="offers">
+    <a class="offer" href="#parkside-2"><span class="o-proj">ЖК Парксайд</span><span class="o-big">от 1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека с ПВ 20–30%. Скидка 5% от красной цены сайта сохраняется.</span><span class="o-more">Условия Парксайда →</span></a>
+    <a class="offer" href="#zilart-21"><span class="o-proj">ЖК Зиларт</span><span class="o-big">1 700 ₽ <small>/ мес</small></span><span class="o-text">Траншевая ипотека до 12 месяцев с платежами 1 700 ₽ в месяц.</span><span class="o-more">Условия Зиларта →</span></a>
+    <a class="offer" href="#sovcombank"><span class="o-proj">Готовые дома</span><span class="o-big">4,4% <small>на первый год</small></span><span class="o-text">Ставка от Совкомбанка для всех готовых домов, продажа по ДКП.</span><span class="o-more">Как работает →</span></a>
+  </div>
+</section>
+
 
 <!-- ============ ПО ЖК ============ -->
 <section id="by-project">
@@ -306,7 +351,7 @@ td.proj a:hover { color: var(--accent); border-color: var(--accent); }
       </ul>
       <p class="note">Первый транш — в день подписания договора на СБР/аккредитив. Последний — не позднее директивных сроков.</p>
     </article>
-    <article class="card">
+    <article class="card" id="sovcombank">
       <h3>Совкомбанк: сниженный платёж, ПВ от 20,1%, на 12 месяцев</h3>
       <p><span class="chip warn">только ДКП</span><span class="chip">≈ 4,4% годовых в льготный период</span></p>
       <p><span class="chip">Зиларт, дом 18 «Гранд»</span><span class="chip">Вейв, очередь 1</span><span class="chip">Парксайд, очередь 1</span><span class="chip">Дмитровское небо, очередь 1</span><span class="chip">Лучи: 6 оч. корп. 12; 8 оч. корп. 1–2, 3–4</span></p>
@@ -587,6 +632,18 @@ document.getElementById("rates").innerHTML = rates.map(([bank, r, term, lim]) =>
   select(h || current, !!h);
 })();
 </script>
+<script>
+(() => {
+  const d = document.getElementById("promo");
+  if (!d || typeof d.showModal !== "function") return;
+  const close = () => { if (d.open) d.close(); };
+  document.getElementById("promo-x").addEventListener("click", close);
+  document.getElementById("promo-go").addEventListener("click", close);
+  d.addEventListener("click", e => { if (e.target === d || e.target.closest("a.offer")) close(); });
+  try { d.showModal(); } catch (e) {}
+})();
+</script>
+
 
 
 </body>
